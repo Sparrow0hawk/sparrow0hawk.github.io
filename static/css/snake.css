@@ -1,20 +1,21 @@
-html {
-  margin: 0;
-  box-sizing: border-box;
-  background-color:  	rgb(75,0,130);
+html, body {
+  background-color: rgb(75,0,130);
   color: #fff;
-  font-family: Ubuntu;
+  font-family: Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 
 }
 canvas {
   background-color: rgb(50,205,50);
-  width : 80vw;
-  height: 80vh;
+  width : 250px;
+  height: 250px;
   border : 10px solid cornflowerblue;
 }
 
 .game_zone {
-  width: 500px;
-  display: block;
   margin: 0 auto;
+  width: 250px;
+}
+
+button {
+  color: rgb(0,0,0);
 }
