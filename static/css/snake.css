@@ -1,3 +1,7 @@
+ * {
+   box-sizing: border-box;
+ }
+
 html, body {
   background-color: rgb(75,0,130);
   color: #fff;
@@ -6,14 +10,13 @@ html, body {
 }
 canvas {
   background-color: rgb(50,205,50);
-  width : 250px;
-  height: 250px;
+  width : 80vmin;
   border : 10px solid cornflowerblue;
 }
 
 .game_zone {
   margin: 0 auto;
-  width: 250px;
+  width: 80vmin;
 }
 
 button {
