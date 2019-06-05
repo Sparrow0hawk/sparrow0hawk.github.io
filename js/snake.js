@@ -49,7 +49,7 @@ function drawBackground() {
 
   ctx.fillStyle = "tan";
 
-  ctx.fillRect(0, 0, 250, 250);
+  ctx.fillRect(0, 0, 500, 500);
 }
 
 function drawSnake() {
@@ -77,19 +77,19 @@ function addPart() {
   switch (direction) {
 
     case 1:
-      y = mod(250, y - 10);
+      y = mod(500, y - 10);
       break;
 
     case -1:
-      y = mod(250, y +10);
+      y = mod(500, y +10);
       break;
 
     case -2:
-      x = mod(250, x + 10);
+      x = mod(500, x + 10);
       break;
 
     case 2:
-      x = mod(250, x - 10);
+      x = mod(500, x - 10);
       break;
 
   }
@@ -125,19 +125,19 @@ function moveSnake() {
   switch (state.direction) {
 
     case 1:
-      y = mod(250, y + 10);
+      y = mod(500, y + 10);
       break;
 
     case -1:
-      y = mod(250, y - 10);
+      y = mod(500, y - 10);
       break;
 
     case -2:
-      x = mod(250, x - 10);
+      x = mod(500, x - 10);
       break;
 
     case 2:
-      x = mod(250, x + 10);
+      x = mod(500, x + 10);
       break;
 
   }
