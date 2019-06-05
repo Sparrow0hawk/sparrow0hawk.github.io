@@ -1,0 +1,35 @@
+/*
+* Base style
+*/
+
+html, body {
+  font-family:  Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 16px;
+  background-size: 100%;
+  background: url('../jpeg/lyveden.jpeg') no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  height: 100%;
+  width: 100%;
+  display: -ms-flexbox;
+  display: -webkit-box;
+  display: flex;
+  -ms-flex-pack: center;
+  -webkit-box-pack: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.row {
+  width: 80vw;
+  margin: 0 auto;
+}
+
+#disclaimer {
+  font-size: 9px;
+}
+
+/*
+* custom font import
+*/

@@ -1,0 +1,20 @@
+html {
+  margin: 0;
+  box-sizing: border-box;
+  background-color:  	rgb(75,0,130);
+  color: #fff;
+  font-family: Ubuntu;
+
+}
+canvas {
+  background-color: rgb(50,205,50);
+  width : 80vw;
+  height: 80vh;
+  border : 10px solid cornflowerblue;
+}
+
+.game_zone {
+  width: 80vw;
+  display: block;
+  margin: 0 auto;
+}
