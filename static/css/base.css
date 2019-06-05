@@ -2,6 +2,7 @@
 * Base style
 */
 
+/*
 html, body {
   font-family:  Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   font-size: 16px;
@@ -20,9 +21,16 @@ html, body {
   justify-content: center;
   color: #fff;
 }
+*/
+.navbar {
+  margin-bottom: 0;
+  border-radius: 0;
+}
+
 
 .row {
-  width: 80vw;
+  height: auto;
+  width: auto;
   margin: 0 auto;
 }
 
