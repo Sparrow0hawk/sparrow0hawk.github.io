@@ -1,8 +1,23 @@
 <!-- first go at javascript, built off this https://www.sketchalgorithms.com/games/snake-game#code  -->
 <html>
 <head>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="static/css/snake.css">
 </head>
+<nav class="navbar navbar-inverse">
+  <div class="container-fluid">
+    <div class="navbar-header">
+    </div>
+    <ul class="nav navbar-nav">
+        <li><a href="#">Home</a></li>
+        <li class="active"><a href="https://sparrow0hawk.github.io/snake">Play snake!</a></li>
+        <li ><a href="https://sparrow0hawk.github.io/about">Find the about page.</a></li>
+      </ul>
+    </div>
+</nav>
+
 <div class="game_zone">
   <canvas id="draw-board"></canvas>
   <div id="score">Score: 0</div>

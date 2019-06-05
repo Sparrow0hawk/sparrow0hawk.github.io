@@ -2,31 +2,30 @@
 * Base style
 */
 
-/*
+
 html, body {
   font-family:  Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   font-size: 16px;
-  background-size: 100%;
-  background: url('../jpeg/lyveden.jpeg') no-repeat center center fixed;
+  background-size: cover;
+  background-image: url('../jpeg/lyveden.jpeg');
+  background-position: center center fixed;
+  background-repeat: no-repeat;
   -webkit-background-size: cover;
   -moz-background-size: cover;
   -o-background-size: cover;
-  height: 100%;
-  width: 100%;
-  display: -ms-flexbox;
-  display: -webkit-box;
-  display: flex;
-  -ms-flex-pack: center;
-  -webkit-box-pack: center;
-  justify-content: center;
   color: #fff;
+  min-height: 100vh;
 }
-*/
+
 .navbar {
   margin-bottom: 0;
   border-radius: 0;
 }
 
+footer {
+  position: absolute;
+  bottom: 0;
+}
 
 .row {
   height: auto;
