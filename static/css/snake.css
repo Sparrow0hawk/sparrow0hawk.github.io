@@ -14,6 +14,14 @@ canvas {
   border : 10px solid cornflowerblue;
 }
 
+.navbar {
+  background: rgba(0,0,0,0.4);
+  border: none;
+  border-radius: 0;
+  margin-bottom: 0;
+  border-radius: 0;
+}
+
 .game_zone {
   margin: 0 auto;
   width: 80vmin;

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang='en'>
 <head>
-  <title>Hello world</title>
+  <title>Test page</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
@@ -14,24 +14,32 @@
     <div class="navbar-header">
     </div>
     <ul class="nav navbar-nav">
-        <li class="active"><a href="#">Home</a></li>
+        <li><a href="https://sparrow0hawk.github.io/">Home</a></li>
         <li><a href="https://sparrow0hawk.github.io/snake">Play snake!</a></li>
         <li><a href="https://sparrow0hawk.github.io/about">About</a></li>
-        <li><a href="https://sparrow0hawk.github.io/testpage">Test page</a></li>
+        <li class="active"><a href="#">Test page</a></li>
       </ul>
     </div>
 </nav>
 
-<div class="container-fluid">
+<div class="container-fluid text-center">
   <div class="row content">
-    <div class="col-sm-3 sidenav">
-      <p>Some text</p>
+    <div class="col-sm-6 sidenav">
+      <h1>One half</h1>
+
+      <textarea id="htmlinput" style="color:black;"> </textarea>
+      <p> </p>
+        <div id="target">
+        Text goes here.
+        </div>
+      <script>
+      $("#htmlinput").on("input",function(){
+        $("#target").html($(this).val());
+        });
+      </script>
     </div>
-    <div class="col-sm-6 text-center">
-      <h1>Hello world</h1>
-    </div>
-    <div class="col-sm-3 sidenav">
-        <p>More text</p>
+    <div class="col-sm-6 sidenav">
+        <h1>The other half</h1>
     </div>
   </div>
 </div>
