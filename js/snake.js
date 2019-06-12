@@ -52,6 +52,26 @@ function drawBackground() {
   ctx.fillRect(0, 0, 250, 250);
 }
 
+function drawGameOver() {
+
+  ctx.fillStyle = 'black';
+
+  ctx.fillRect(0, 0, 250, 250);
+
+  //moving filltext to here works
+
+  ctx.font = "20px Arial";
+
+  ctx.fillStyle = 'red';
+
+  ctx.textAlign = 'center';
+
+  let score_print = state.score
+
+  ctx.fillText('Game over. Your score: ' + score_print, canvas.width / 2, canvas.height / 2);
+
+}
+
 function drawSnake() {
 
   for (let i = state.snake.length - 1; i >= 0; --i) {
@@ -156,7 +176,11 @@ function moveSnake() {
 function checkGameOver() {
   const head = state.snake[0];
 
+  // .some checks whether some part of array passes test provided
   return state.snake.some(
+    // with part and part-index check whether index isn't the head (0)
+    // and if head x dim equals part x dim and head y dim equals part y dim
+    // if true return true (so game over is true)
     (part, i) => i !== 0 && head.x === part.x && head.y === part.y
   );
 }
@@ -174,17 +198,20 @@ function generateFood() {
 
 }
 
+// game loop section
 var start = 0;
 
 function draw(timestamp) {
 
   start++;
 
+// setting framerate here
   if (timestamp - start > 1000 / 10) {
 
     if (checkGameOver()) {
 
       state.gameover = true;
+      drawGameOver();
       return;
     }
 
@@ -200,7 +227,7 @@ function draw(timestamp) {
 
     start = timestamp;
   }
-
+// repeat this loop until gameover occurs
   if (!state.gameover) window.requestAnimationFrame(draw);
 }
 
