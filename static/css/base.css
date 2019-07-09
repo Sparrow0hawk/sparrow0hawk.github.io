@@ -26,10 +26,6 @@ html, body {
   border-radius: 0;
 }
 
-.justify-content-center {
-  justify-content: center !important;
-}
-
 .headshot {
   border-radius: 50%;
   padding: 20px;
@@ -41,8 +37,11 @@ html, body {
 }
 
 .link_img {
-  text-align: center;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
   border-radius: 10%;
+  border:5px solid grey;
 }
 
 footer {
