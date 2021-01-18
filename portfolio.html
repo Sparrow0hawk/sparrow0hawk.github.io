@@ -2,21 +2,21 @@
 <html lang='en'>
 <head>
     <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-143563423-1"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-143563423-2"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
 
-    gtag('config', 'UA-143563423-1');
+    gtag('config', 'UA-143563423-2');
   </script>
-
-  <title>Alex Coleman - home</title>
+  <title>Portfolio</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
   <link rel="stylesheet" href="static/css/base.css">
 </head>
+
 <body>
 
   <nav class="navbar navbar-inverse">
@@ -35,19 +35,33 @@
       </div>
   </nav>
 
-<div class="cover-container d-flex h-100 p-3 mx-auto flex-column">
 
-  <main class="inner cover" role="main">
-    <h1 style="font-size:2.5rem">Alex Coleman</h1>
-    <p role="lead">
-      Welcome to my showcase site.
-    </p>
-    <img src='static/jpeg/head.jpeg' class='headshot'></img>
-</div>
+  <div class="container-fluid">
+    <h1>Portfolio</h1>
+    <div class="row content" style="text-align:justify;">
+      <div class="col-sm-4">
+        <p class="trititles">Data Science Intern | LIDA | Crime Data Analytics</p>
+        <p>After completing my PhD I started my current role as a Data Science
+          Intern at Leeds Institute of Data Analytics working with Dr Daniel Birks
+          on using topic modelling to identify specific modus operandi from police free
+          text data in collaboration with Safer Leeds.
+        </p>
+      </div>
+    </div>
+    <div class="row content">
+      <div class="col-sm-4">
+        <a href="http://turing.ac.uk/research/research-projects/actionable-insights-free-text-police-data">
+        <img class="link_img" src="static/jpeg/policetext.jpeg" height="80%"
+        width="60%">
+        </a>
+      </div>
+    </div>
+  </div>
 
-<footer class="container-fluid text-center">
-  <p id='disclaimer'>&copy; Image copyright Nick Coleman 2018 </p>
-</footer>
+  <footer class="container-fluid text-center">
+    <p id='disclaimer'>&copy; Image copyright Nick Coleman 2018 </p>
+  </footer>
 
+<!-- <script src="js/canvas.js"></script> -->
 </body>
 </html>
