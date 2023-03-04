@@ -18,9 +18,11 @@ highlight_code = true
 # Put all your custom variables here
 after_dark_menu = [
         {url = "$BASE_URL", name = "Home"},
-        {url = "$BASE_URL/blog", name = "Blog"},
+        {url = "$BASE_URL/about", name = "About"},
+        {url = "https://github.com/Sparrow0hawk/", name = "GitHub"},
+        {url = "https://twitter.com/Alex_C0leman", name = "Twitter"},
         {url = "$BASE_URL/learn_rust", name = "Learn Rust🦀"},
 ]
 
-after_dark_title = "Alex Coleman's site"
+after_dark_title = "Alex Coleman's blog"
 
