@@ -1,12 +1,6 @@
 +++
 paginate_by = 5
+sort_by = "date"
 +++
 
-
-Hello magic test!!
-
-
-
-
-magic boo foo
 
