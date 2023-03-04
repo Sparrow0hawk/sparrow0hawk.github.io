@@ -1,0 +1,47 @@
+---
+layout: post
+title: Reflections from RustNation 2023
+tags: rust
+---
+
+
+I'm on the train back to Leeds after a fantastic 2 days at [RustNation 2023](https://www.rustnationuk.com/) the first UK Rust language conference. 
+
+<!-- more -->
+
+I was lucky enough to have my work support me in attending and get an early bird ticket which enabled me to take part in the full day workshop on Thursday as well as the conference on Friday.
+
+Here are some reflections on my time there...
+
+I've been interested in Rust for a couple of years now and whilst I've yet to see it used within research software (I'm sure research software written is Rust does exist I just haven't seen it!), I'm super interested in where this language is going and how it could be applied to research software.
+Out of work I've also dabbled with Rust and as someone from a Python background I've found the learning curve steep (as advertised) but benefitted from the host of terrific resources available to learn ([See notes on this](../learn_rust.md)).
+So RustNation seemed like the perfect opportunity to learn more and speak to others about how Rust is being used and taught.
+
+The conference was hosted at the Brewery in London and kicked off on 16th February Thursday with all day workshops separated into 3 tracks: beginner, intermediate and expert.
+I selected the [intermediate workshop](https://github.com/codurance/rust-nation-intermediate-workshop) (run by Jocelyn Facchini from Codurance) which looked to cover generics, traits, macros, threads and web assembly. 
+All topics I've read about but never quite got my head around.
+Suffice to say my head was thoroughly fried by the end of the day but it had been great to not only have someone clearly outline these topics and their applications in Rust programs, but also get stuck in with challenging but practical code examples.
+The section on macros in particular really helped solidify in my head how you create and use macros in Rust.
+The workshop also served as a really fun environment to speak to others using Rust, see how they wrote their code and work together to crack the code examples (Ibrahim and James, you were very helpful!). 
+It was also great to see how these more advanced topics were approached from a teaching perspective and it was particularly useful to chat with the instructor for the beginners session in one of the breaks about how they approached introducing people to Rust.
+The final section on web assembly looked specifically at the [Yew framework](https://yew.rs/), this was really interesting as a way of developing component-based web applications using Rust that I hadn't heard of before.
+
+Day 2 kicked off at 9am with the keynote from Nell Shamrell-Harrington talking about the cycle of learning, teaching, delivering in the Rust community.
+It touched on a lot of the things I think are great about Rust: the community's openness to beginners, the  availability of resources like [the book](https://doc.rust-lang.org/book/) and initiatives like [This Week in Rust](https://this-week-in-rust.org/) (which has been a great entrypoint for me to see how to use Rust).
+This all fed into what I'd call the Rust promise, which is the welcoming culture that encourages us not just to learn Rust for ourselves but to learn Rust to share what we've learned with others (something I can definitely get on board with!).
+My biggest problem at this stage of the conference was that there were actually too many interesting talks to pick from.
+Thankfully, the event was also [live streamed](https://live.rustnationuk.com/) so hopefully I can go back and check out the talks I missed.
+
+I went along to a TockOS demonstration which covered using the TockOS to program for embedded systems.
+This was very cool (they even had Raspberry Pi's for you to have a go on!) although it was definitely a level up from my experience using MicroPython and running some little examples from the [Embedded Rust book](https://docs.rust-embedded.org/discovery/microbit/index.html) on my BBC Microbit.
+Tim McNamara (of the [TimClicks YouTube channel](https://www.youtube.com/c/timclicks)/[Rust In Action](https://www.manning.com/books/rust-in-action) fame) did a super talk about encouraging adoption of Rust into a workplace and his reflections on teaching Rust within AWS.
+This talk was peppered with excellent insights into how you teach Rust and do so in a manner that brought people with you so that making the shift was sustainable.
+Before dashing off to find my storm-delayed train I watched Stephen Chin from JFrog talk about their open sourced tool [Pyrsia](https://pyrsia.io/) for tackling security issues with open source supply chains.
+This uses blockchain and signing tools to create more public information about packages uploaded to a distributed network of package repositories ensuring trust around the packages present.
+I haven't totally got my head around how it works but it sounded like an interesting solution to the supply chain security problem ([something else I'm interested in](https://software.ac.uk/about/fellows/alex-coleman)).
+
+Overall, RustNation rocked! It was fantastic to meet other people writing Rust, hear about how people are using it in production and how people are teaching it to others! 
+An enormous congratulations to Ernest and the whole conference team for putting it on and making it such a success 🎉.
+It's inspired me to think about developing some beginner materials and developing some slides to set out my stall at work about why I think Rust is great and why I think researchers should start looking at it.
+
+![RustNation Badge on laptop](rustnationbadge.jpeg)
