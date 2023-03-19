@@ -1,0 +1,20 @@
+name: Zola on GitHub Pages
+
+on: 
+ pull_request:
+  branches:
+   - main
+
+jobs:
+  build:
+    name: Check site
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout main
+      uses: actions/checkout@v3.0.0
+    - uses: taiki-e/install-action@v2
+      with:
+        tool: zola@0.17.1
+    - name: Run zola check
+      run: zola check
+      
