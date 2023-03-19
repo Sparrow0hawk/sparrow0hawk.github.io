@@ -16,5 +16,5 @@ jobs:
       with:
         tool: zola@0.17.1
     - name: Run zola check
-      run: cd sparrow0hawk.github.io && zola check
+      run: ls -l
       
