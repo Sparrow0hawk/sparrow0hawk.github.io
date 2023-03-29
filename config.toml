@@ -4,6 +4,8 @@ base_url = "https://sparrow0hawk.github.io"
 # Whether to automatically compile all Sass files in the sass directory
 compile_sass = true
 
+generate_feed = true
+
 title = "Alex Coleman"
 description = "Alex's Coleman's personal site and blog"
 
