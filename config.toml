@@ -9,6 +9,8 @@ generate_feed = true
 title = "Alex Coleman"
 description = "Alex's Coleman's personal site and blog"
 
+author = "Alex Coleman"
+
 theme = "after-dark"
 
 # Whether to build a search index to be used later on by a JavaScript library
