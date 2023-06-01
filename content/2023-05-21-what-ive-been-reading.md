@@ -26,6 +26,11 @@ problem because often you want to crunch a big dataset across multiple cores but
 you have to use more memory than the actual size of your dataset because you
 have to make copies of the data when using `multiprocessing`.
 
+Update: On this point above about processes and memory use, this isn't strictly
+true on Linux due to copy-on-write. So when we create multiple processes they
+don't actually copy the memory for each process unless they actually try and
+change the value. Thanks John Hodrien for pointing this out![1]
+
 What Martin digs into in his post is how the coming "Per-interpreter GIL" change
 in Python 3.12 can actually be used to do true multi-threading! He notes
 crucially that this change coming in Python 3.12 isn't for end users and that a
@@ -58,3 +63,5 @@ allocators work. As someone not from a computer science background I really love
 posts like this that help fill out my understanding of what is actually going on
 with things like memory. This post also comes with some great interactive
 widgets and cute little dog call outs, whats not to like! 
+
+[1]: https://twitter.com/johnhodrien/status/1662824749930627073
