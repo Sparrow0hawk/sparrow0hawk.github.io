@@ -65,10 +65,20 @@ file. The `.env` file or `.Renviron` files should never be commited to version
 control but allow you on a project-by-project basis to
 handle secrets using configuration files. 
 
+The .gitignore file is our friend in these situations. If you've used git for
+version control you may or may not be familiar with the [`.gitignore`
+file](https://git-scm.com/docs/gitignore). Sometimes all we want is to actually
+ignore a file from version control and make sure it isn't added and tracked. You
+can ignore files and folders easily in git using the `.gitignore`. This is just
+a text file that lives in the root of our repository where each line specifies a
+pattern of file/folder names to ignore. This allows us to easily specify
+specific files or patterns (file extensions) that should be ignored in our
+repository. For managing our secrets in a `.env` file this means we just add
+`.env` as a line in our `.gitignore` and that file won't be tracked by git,
+keeping our secrets out of version control.
+
 However, the downside of environment variables is that they are still plain text within our system so if the system our code is running on is compromised bad actors can still get at our secrets! 
 
-
-The .gitignore file is our friend in these situations 
 
 - what is a secret
 - How do we leak them?
