@@ -55,6 +55,16 @@ From the simplified above example you can hopefully see how you could use
 environment variables to store secrets outside of your code but still retrieve
 them at run time. 
 
+To avoid having to explicitly set all these environment variables before you run
+them there are a number of packages that let you specify a `.env` file in which
+you specify your secrets as key-value pairs. In Python there's
+[decouple](https://pypi.org/project/python-decouple), in R you can use the
+default
+[`.Renviron`](https://bookdown.org/content/d1e53ac9-28ce-472f-bc2c-f499f18264a3/envManagement.html#use-.renviron-file)
+file. The `.env` file or `.Renviron` files should never be commited to version
+control but allow you on a project-by-project basis to
+handle secrets using configuration files. 
+
 However, the downside of environment variables is that they are still plain text within our system so if the system our code is running on is compromised bad actors can still get at our secrets! 
 
 
