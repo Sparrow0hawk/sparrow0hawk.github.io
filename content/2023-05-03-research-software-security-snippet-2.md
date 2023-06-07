@@ -17,9 +17,9 @@ run, but that is a private piece of information you wouldn’t want to share.
 Including these secrets publicly in our source code a bad idea. They expose us
 to bad actors who could impersonate us to access systems or use APIs we’re
 paying for (some of a few potential bad examples). Secret leakage is a major
-cause of security incidents at companies: for example, Uber in 2022 was breached
-using hard coded admin credentials that allowed attackers to breach their privilege
-access management platform  https://blog.gitguardian.com/uber-breach-2022/amp/ 
+cause of security incidents at companies: for example, [Uber in 2022 was
+breached](https://blog.gitguardian.com/uber-breach-2022/amp/) using hard coded
+admin credentials that allowed attackers to breach their privilege access management platform.
 
 Leaking secrets is very easy to do. Often the biggest mistake can be hard coding 
 them into our source code and (whilst trying to be good and using version control)
