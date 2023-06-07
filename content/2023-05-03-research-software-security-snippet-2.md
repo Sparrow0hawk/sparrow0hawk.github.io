@@ -74,8 +74,7 @@ file.
 
 ## Keeping secrets out of the public eye
 The `.env` file or `.Renviron` files should never be commited to version
-control, but allow you on a project-by-project basis to
-handle secrets using configuration files. 
+control, but allow you on a project-by-project basis to handle secrets using configuration files. 
 
 The .gitignore file is our friend in these situations. If you've used git for
 version control you may or may not be familiar with the [`.gitignore`
@@ -83,16 +82,17 @@ file](https://git-scm.com/docs/gitignore). Sometimes all we want is to actually
 ignore a file from version control and make sure it isn't accidentally added and tracked. 
 
 The `.gitignore` file is just a text file that lives in the root of our repository. 
-Each line in the file specifies a pattern of file/folder names to ignore. This allows us to easily specify
-specific files or patterns (file extensions) that should be ignored in our
-repository. For managing our secrets in a `.env` file, this means we just add
-`.env` as a line in our `.gitignore`, and that file won't be tracked by git,
-keeping our secrets out of version control. We should commit the `.gitignore` file into
-version control, so that cloned versions of our repository will also ignore the files
-listed!
+Each line in the file specifies a pattern of file/folder names to ignore. This
+allows us to easily specify specific files or patterns (file extensions) that
+should be ignored in our repository. For managing our secrets in a `.env` file,
+this means we just add `.env` as a line in our `.gitignore`, and that file won't
+be tracked by git, keeping our secrets out of version control. We should commit
+the `.gitignore` file into version control, so that cloned versions of our
+repository will also ignore the files listed!
 
-Docker provides similar functionality through the `.dockerignore` file. Accidentally copying `.env` files
-into our docker images can be surprisingly easy, as the following example demonstrates:
+Docker provides similar functionality through the `.dockerignore` file.
+Accidentally copying `.env` files into our docker images can be surprisingly
+easy, as the following example demonstrates:
 
 ```Dockerfile
 FROM alpine:latest
@@ -101,8 +101,8 @@ CMD ["cat", ".env"]
 ```
 
 The `COPY . .` command in this Dockerfile was intended to copy our application files, but
-has a potentially unforseen side-effect: it will copy dotfiles (files with a dot in front), too!
-This includes our `.env` file containing all our secrets:
+has a potentially unforseen side-effect: it will copy dotfiles (files with a dot
+in front), too! This includes our `.env` file containing all our secrets:
 
 ```bash
 $ echo "# THIS FILE SHOULD NOT BE COPIED!" > .env
@@ -111,14 +111,16 @@ $ docker run test
 # THIS FILE SHOULD NOT BE COPIED!
 ```
 
-Oops! `.dockerignore` uses exactly the same syntax as `.gitignore`, so an `.env` file can be easily
-excluded from the Docker image by commiting a `.dockerignore` file with the following content into our repository:
+Oops! `.dockerignore` uses exactly the same syntax as `.gitignore`, so an `.env`
+file can be easily excluded from the Docker image by commiting a `.dockerignore`
+file with the following content into our repository:
 
 ```.gitignore
 **/*.env
 ```
 
-Now when we build and run our example container, the .env file is not included by the `COPY . .` command:
+Now when we build and run our example container, the .env file is not included
+by the `COPY . .` command:
 
 ```bash
 $ docker build --tag=test .
@@ -126,40 +128,46 @@ $ docker run test
 cat: can't open '.env': No such file or directory
 ```
 
-However, the downside of environment variables is that they are still plain text within our system, so if 
-the system our code is running on is compromised bad actors can still get at our secrets! 
+However, the downside of environment variables is that they are still plain text
+within our system, so if the system our code is running on is compromised bad
+actors can still get at our secrets! 
 
 ## Oops, I accidentally committed a secret. What now?
 
-We've now learned how to keep secrets out of our Git repositories in the first place, but what happens if
-we accidentally commit and push them? It's too easy for something to slip through the net, despite implementing best
-practices like `.gitignore` and `.dockerignore`.
+We've now learned how to keep secrets out of our Git repositories in the first
+place, but what happens if we accidentally commit and push them? It's too easy
+for something to slip through the net, despite implementing best practices like `.gitignore` and `.dockerignore`.
 
-Third-party tools like [GitGuardian](https://gitguardian.com/) (free for teams of 25 members or fewer) 
-can enable us to take corrective action when the worst happens. GitGuardian scans repositories against a
-set of definitions for known types of secret, and creates an "Incident" where a match is found. It can
-even be set up as part of a CI/CD pipeline, and send a notification to enable us to realise and revoke 
-a leaked secret in real-time.
+Third-party tools like [GitGuardian](https://gitguardian.com/) (free for teams
+of 25 members or fewer)  can enable us to take corrective action when the worst
+happens. GitGuardian scans repositories against a
+set of definitions for known types of secret, and creates an "Incident" where a
+match is found. It can even be set up as part of a CI/CD pipeline, and send a
+notification to enable us to realise and revoke a leaked secret in real-time.
 
-This links to a key design principle: Secrets should be revokable. We're familiar with the concept of
-changing our passwords for online services and websites, and it's a similar principle. Third-party APIs
-and services often employ an API key, so that we don't have to write code which needs access to our
-personal password. For example, DockerHub allows us to create API keys which scripts can use to publish
-our containers, avoiding the need to provide our CI/CD scripts with a password.
+This links to a key design principle: Secrets should be revokable. We're
+familiar with the concept of changing our passwords for online services and
+websites, and it's a similar principle. Third-party APIs and services often
+employ an API key, so that we don't have to write code which needs access to our
+personal password. For example, DockerHub allows us to create API keys which
+scripts can use to publish our containers, avoiding the need to provide our CI/CD scripts with a password.
 
-API keys allow us to limit access to an application through the principle of least privilege. Instead of
-a password, which allows access to all functions of an application, an API key often provides the ability
-to give our applications only the permissions which they require: e.g. read-only access, or access to a
-limited set of resources. API keys can be easily revoked, removing the possibility for them to be used
-by a malicious actor, and limiting their permissions can limit or mitigate the damage that can be done 
-if and when they do leak.
+API keys allow us to limit access to an application through the principle of
+least privilege. Instead of a password, which allows access to all functions of
+an application, an API key often provides the ability to give our applications only the permissions which they require: e.g. read-only access, or access to a
+limited set of resources. API keys can be easily revoked, removing the
+possibility for them to be used by a malicious actor, and limiting their
+permissions can limit or mitigate the damage that can be done if and when they do leak.
 
-Tools such as the [BFG repo cleaner](https://github.com/rtyley/bfg-repo-cleaner) can be used to alter git 
-repository history, for example to remove a secret-containing file that should never have been committed 
-in the first place. In general, this approach should be applied with caution: never assume that by removing 
-the secret from the repository, it's now gone. Once something has been published to the internet, for 
-however little time, it should be considered compromised. While you can remove the file from the repository
-in this way, any leaked API keys also need to be revoked.
+Tools such as the [BFG repo cleaner](https://github.com/rtyley/bfg-repo-cleaner)
+can be used to alter git repository history, for example to remove a
+secret-containing file that should never have been committed 
+in the first place. In general, this approach should be applied with caution:
+never assume that by removing the secret from the repository, it's now gone.
+Once something has been published to the internet, for 
+however little time, it should be considered compromised. While you can remove
+the file from the repository in this way, any leaked API keys also need to be
+revoked.
 
 
 
