@@ -4,6 +4,9 @@ title = "Research Security Snippets #2 Secret stuff"
 author = "Alex Coleman, Samantha Finnigan"
 +++
 
+> A big thank you to Sam Finnigan, RSE from Durham for helping co-author this post
+and advice on content
+
 In this instalment of Research Software security snippets, we're going to talk
 about secrets! Not those deep and darkest things, but rather all those bits of
 information you need in your code for it to run that you don’t want shared with
