@@ -1,5 +1,7 @@
 +++
 title = "Research Security Snippets #2 Secret stuff"
+[extra]
+author = "Alex Coleman, Samantha Finnigan"
 +++
 
 In this instalment of Research Software security snippets, we're going to talk
