@@ -30,11 +30,11 @@ public source repository!
 Another way that secrets leak is through tools such as Docker. Docker is a
 containerisation tool that allows us to bundle software and its dependencies
 (including operating system dependencies) into a container we can share with
-others. In Docker we might use things like environment variables to manage
-secrets that allow our software to connect to a service, like a database, but
-these environment variables are still encoded within the container and anyone 
-can view them if we make the container publicly available through a container
-repository such as [Docker Hub](https://hub.docker.com).
+others. In Docker we might use things like environment variables (more on those
+below) to manage secrets that allow our software to connect to a service, like a
+database, but these environment variables are still encoded within the container
+and anyone  can view them if we make the container publicly available through a
+container repository such as [Docker Hub](https://hub.docker.com).
 
 Secrets are a really easy thing to accidentally share when we’re first learning
 about using version control tools like git. We’re trying our hardest to keep
