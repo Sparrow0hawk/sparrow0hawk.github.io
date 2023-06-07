@@ -11,6 +11,7 @@ everyone else.
 <!-- more -->
 
 ## Secrets and Environments
+
 Let’s start off by defining these secrets. A secret is something like an API key, a
 password, username, database key or authentication token that your code uses to
 run, but that is a private piece of information you wouldn’t want to share.
@@ -45,6 +46,8 @@ within our code is to separate them out from our source code. Secrets shouldn’
 live within our code, it’s much better to find a way to inject them when our
 code runs. 
 
+## Separating code and secrets: Environment variables
+
 The classic way to do this is with environment variables. Environment
 variables are named key/value pairs that exist within the system environment. We can
 retrieve the value using the environment variable name because they’re set
@@ -52,6 +55,7 @@ outside our program. They have been historically used as a method for storing
 secrets which we can retrieve in our code:
 
 ```python
+# main.py
 import os
 print(os.environ[“TEST”])
 ```
@@ -79,10 +83,11 @@ convenient way. Environment variables aren't perfect but they are a good easy
 entry point for starting to secure your code.
 
 ## Keeping secrets out of the public eye
+
 The `.env` file or `.Renviron` files should never be commited to version
 control, but allow you on a project-by-project basis to handle secrets using configuration files. 
 
-The .gitignore file is our friend in these situations. If you've used git for
+The `.gitignore` file is our friend in these situations. If you've used git for
 version control you may or may not be familiar with the [`.gitignore`
 file](https://git-scm.com/docs/gitignore). Sometimes all we want is to actually
 ignore a file from version control and make sure it isn't accidentally added and tracked. 
@@ -97,7 +102,7 @@ the `.gitignore` file into version control, so that cloned versions of our
 repository will also ignore the files listed!
 
 Docker provides similar functionality through the `.dockerignore` file.
-Accidentally copying `.env` files into our docker images can be surprisingly
+Accidentally copying `.env` files into our Docker images can be surprisingly
 easy, as the following example demonstrates:
 
 ```Dockerfile
@@ -125,7 +130,7 @@ file with the following content into our repository:
 **/*.env
 ```
 
-Now when we build and run our example container, the .env file is not included
+Now when we build and run our example container, the `.env` file is not included
 by the `COPY . .` command:
 
 ```bash
