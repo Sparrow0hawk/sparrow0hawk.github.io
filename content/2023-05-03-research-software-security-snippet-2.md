@@ -67,12 +67,16 @@ environment variables to store secrets outside of your code but still retrieve
 them at run time.
 
 To avoid having to explicitly set all these environment variables before you run
-them there are a number of packages that let you specify a `.env` file in which
-you specify your secrets as key-value pairs. In Python there's
+your code there are a number of packages that let you specify a `.env` file
+(often called "dotenv") in which you specify your secrets as key-value pairs.
+For instance (by not exhaustively), in Python there's
 [decouple](https://pypi.org/project/python-decouple), in R you can use the
-default
-[`.Renviron`](https://bookdown.org/content/d1e53ac9-28ce-472f-bc2c-f499f18264a3/envManagement.html#use-.renviron-file)
+default [`.Renviron`](https://bookdown.org/content/d1e53ac9-28ce-472f-bc2c-f499f18264a3/envManagement.html#use-.renviron-file)
 file. 
+
+This allows you to start to separate your code and your secrets and do so in a
+convenient way. Environment variables aren't perfect but they are a good easy
+entry point for starting to secure your code.
 
 ## Keeping secrets out of the public eye
 The `.env` file or `.Renviron` files should never be commited to version
