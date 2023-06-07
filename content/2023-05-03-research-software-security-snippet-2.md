@@ -175,17 +175,14 @@ however little time, it should be considered compromised. While you can remove
 the file from the repository in this way, any leaked API keys also need to be
 revoked.
 
+## Conclusion
 
-
-- what is a secret
-- How do we leak them?
-- Secrets and git
-- Secret sprawl survey?
-- GitHub secret scanning 
-- Secrets and docker/containers
-- Tools for managing secrets
-- Git hooks
-- Dotenv
-- Environment variables
-- Keyvaults
+We've taken some tentative steps above to introduce ideas around code secrets
+and how we manage them. Separating our secrets and our code is a key step in
+keeping ourselves safe and ensuring our code is secure. Environment variables
+are a classic way to do this and widely supported with the concept of "dotenv"
+files but aren't perfect. We also touched on how its easy to accidentally
+include secrets in version control and within container images and suggest some
+tips for how to prevent this using ignore files. In future snippets we'll dig
+into some more advanced approaches to managing secrets.
 
