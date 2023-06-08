@@ -169,10 +169,7 @@ scripts can use to publish our containers, avoiding the need to provide our CI/C
 API keys allow us to limit access to an application through the principle of
 least privilege. Instead of a password, which allows access to all functions of
 an application, an API key often provides the ability to give our applications only the permissions which they require: e.g. read-only access, or access to a
-limited set of resources. API keys can be easily revoked, removing the
-possibility for them to be used by a malicious actor, and limiting their
-permissions can limit or mitigate the damage that can be done if and when they
-do leak. API keys can be easily revoked, removing the possibility for them to be used by
+limited set of resources. API keys can be easily revoked, removing the possibility for them to be used by
 a malicious actor, and limiting their permissions can limit or mitigate the
 damage that can be done if and when they do leak. However, before revoking an
 API key, it's sensible to work out what features of your application rely on it
