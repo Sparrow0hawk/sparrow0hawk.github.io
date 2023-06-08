@@ -4,7 +4,7 @@ title = "Research Security Snippets #2 Secret stuff"
 author = "Alex Coleman, Samantha Finnigan"
 +++
 
-> A big thank you to Sam Finnigan, RSE from Durham for helping co-author this post
+> A big thank you to Samantha Finnigan, RSE from Durham for helping co-author this post
 and advice on content
 
 In this instalment of Research Software security snippets, we're going to talk
@@ -171,7 +171,15 @@ least privilege. Instead of a password, which allows access to all functions of
 an application, an API key often provides the ability to give our applications only the permissions which they require: e.g. read-only access, or access to a
 limited set of resources. API keys can be easily revoked, removing the
 possibility for them to be used by a malicious actor, and limiting their
-permissions can limit or mitigate the damage that can be done if and when they do leak.
+permissions can limit or mitigate the damage that can be done if and when they
+do leak. API keys can be easily revoked, removing the possibility for them to be used by
+a malicious actor, and limiting their permissions can limit or mitigate the
+damage that can be done if and when they do leak. However, before revoking an
+API key, it's sensible to work out what features of your application rely on it
+and may fail when they no longer have permission to access the resource, as this
+can cause other problems. When an API key gives few permissions, it may be more
+reasonable to create a new key and deploy it to the production environment,
+before revoking the compromised secret. 
 
 Tools such as the [BFG repo cleaner](https://github.com/rtyley/bfg-repo-cleaner)
 can be used to alter git repository history, for example to remove a
