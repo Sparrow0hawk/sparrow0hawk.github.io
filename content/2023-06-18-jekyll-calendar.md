@@ -115,15 +115,17 @@ posts generated for future dated events an absolute requirement for this site to
 work!
 
 To support this the Python script described above also only generates posts
-which are dated in the future from the time of execution. __One thing I'm
-actually looking at is how to support upcoming events, as the model described
-here means an event is "popped" out of the calendar when its start time has
-passed. This works fine for events that are short in duration, but for a long
-on-going event (multiple days) it would be better to only "pop" the event from
-the calendar when it has finished (see
-[#67](https://github.com/Sparrow0hawk/rse-calendar/pull/67))__.
-Only generating posts that are in the future ensures the site only pulls through
-future events because Jekyll just assumes this is a blog where we've set future
+which are dated in the future from the time of execution. Only generating posts
+that are in the future ensures the site only pulls through future events because
+Jekyll just assumes this is a blog where we've set future
 to true.
+
+> One thing I'm actually looking at is how to support upcoming events, as the model described
+> here means an event is "popped" out of the calendar when its start time has
+> passed. This works fine for events that are short in duration, but for a long
+> on-going event (multiple days) it would be better to only "pop" the event from
+> the calendar when it has finished (see
+> [#67](https://github.com/Sparrow0hawk/rse-calendar/pull/67)).
+
 
 ## Codeless contributions
