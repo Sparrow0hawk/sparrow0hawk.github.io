@@ -42,7 +42,7 @@ I couldn't implement nice pagination with this model because of limitations with
 how Jekyll pagination behaves, my best approach for getting nice pagination was
 to change the model of my site to using posts.
 
-## Inverting the Jekyll blog logic
+## Jekyll blogs and pagination
 
 Jekyll out-of-the-box makes it easy for you to write a blog using their tool.
 You have a `_posts` directory and you write your markdown-based blog posts and
@@ -70,9 +70,60 @@ To solve my issue of converting YAML data to markdown I fell back to my old
 trusty friend Python and more specifically the
 [Jinja](https://jinja.palletsprojects.com/en/3.1.x/) templating tool. I could
 write a template markdown file that could be populated from a YAML file using
-Jinja and just write these files into the `_posts` directory. I could do all
-this in Python and use GitHub actions to do this only at site build time.
+Jinja and just write these files into the `_posts` directory. This would allow
+me to avoid duplicating data across the site and also preserve the YAML file
+that was used to generate the ICalendar files. 
 
-This was perfect, so 
+GitHub actions provides a mechanism why which I can run this Python script to
+generate posts only when building the site for deploying to GitHub pages. This
+ensures when developing the site I don't create undue duplications between the
+calendar data in the YAML file and in any generated posts. I'm still adhering to
+the principle of keeping the YAML file as the central data around which the site
+is built.
+
+## Inverting Jekyll blog logic
+
+However, we have one slight problem with Jekyll and using posts. Jekyll by
+default is for blogging, where posts are expected to be in the past, but for our
+calendar all events will be in the future so how do we make jekyll show posts
+with a future date?
+
+This isn't such a hurdle as it might seem, Jekyll allows for a configuration
+option within `_config.yml` that allows us to publish posts with a future date:
+
+```yml
+# publish posts with a future date
+future: true
+```
+
+I also configure
+[jekyll-paginate-v2](https://github.com/sverrirs/jekyll-paginate-v2) to sort
+posts for pagination by date. This ensures pagination on the home page with events
+listed in upcoming order.
+
+```yml
+pagination:
+  enabled: true
+  per_page: 5
+  permalink: "/page:num/"
+  sort_field: "date"
+```
+
+This is great! It means that my posts model for building the calendar site is a
+go-er. It means when building the site Jekyll does actually publish the markdown
+posts generated for future dated events an absolute requirement for this site to
+work!
+
+To support this the Python script described above also only generates posts
+which are dated in the future from the time of execution. __One thing I'm
+actually looking at is how to support upcoming events, as the model described
+here means an event is "popped" out of the calendar when its start time has
+passed. This works fine for events that are short in duration, but for a long
+on-going event (multiple days) it would be better to only "pop" the event from
+the calendar when it has finished (see
+[#67](https://github.com/Sparrow0hawk/rse-calendar/pull/67))__.
+Only generating posts that are in the future ensures the site only pulls through
+future events because Jekyll just assumes this is a blog where we've set future
+to true.
 
 ## Codeless contributions
