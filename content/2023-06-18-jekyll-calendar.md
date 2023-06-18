@@ -2,12 +2,12 @@
 title = "Making a calendar website with Jekyll and GitHub pages"
 +++
 
-Recently, I've been working on a Jekyll-based GitHub pages site that presents a
+Recently, I've been working on a Jekyll-based GitHub Pages site that presents a
 paginated list of upcoming events. It also builds on the [CodeRefinery
 git-calendar](https://github.com/coderefinery/git-calendar) tool to generate
 and host ICalendar files to enable people to subscribe calendar apps to it. It's
 been an interesting look at inverting some of Jekyll's normal logic for blog
-posts and using GitHub actions to build markdown posts from YAML.
+posts and using GitHub Actions to build markdown posts from YAML.
 
 <!-- more -->
 
@@ -28,16 +28,19 @@ problem, we could have research software engineers (RSE) contribute their events
 into a YAML file and build a calendar file from there!
 
 But I thought, wouldn't it be nice if we could also display these events on a
-web page. Now, I've messed around with GitHub pages and Jekyll before so I knew that
-Jekyll allowed you to use YAML files as data to populate pages, so I figured
-maybe I could pull data from this calendar YAML file into a GitHub pages site as
+web page. The CodeRefinery project created a simple HTML page explaining how to
+subscribe to the ICalendar files but I wanted to go further and also list
+upcoming events. Now, I've messed around with GitHub Pages and Jekyll before so I knew
+that Jekyll allowed you to use YAML files as data to populate pages, so I figured
+maybe I could pull data from this calendar YAML file into a GitHub Pages site as
 well as build an ICalendar file from it.
 
 This led to what I described as the [_data
 model](https://github.com/Sparrow0hawk/rse-calendar/releases/tag/v0.1.0) for
 this calendar website. And this by and large worked, it allowed me to create a
-single home page using Jekyll, the minima theme and GitHub pages that populated
-a list of events and their associated metadata. What I realised however was that
+single home page using Jekyll, the [minima
+theme](https://github.com/jekyll/minima) and GitHub Pages that populated a list
+of events and their associated metadata. What I realised however was that
 I couldn't implement nice pagination with this model because of limitations with
 how Jekyll pagination behaves, my best approach for getting nice pagination was
 to change the model of my site to using posts.
@@ -48,11 +51,11 @@ Jekyll out-of-the-box makes it easy for you to write a blog using their tool.
 You have a `_posts` directory and you write your markdown-based blog posts and
 pop them in their and it turns them into lovely looking blog pages. That's how
 we did blog posts as [Research Computing at the University of
-Leeds](https://arc.leeds.ac.uk/blog/) and it works very nicely including support
+Leeds](https://arc.leeds.ac.uk/blog/) and it works very nicely, including support
 for pagination.
 
 Pagination, or splitting posts across multiple pages was something I definitely
-wanted for the calendar site as its not particularly nice scrolling down one
+wanted for the calendar site as it's not particularly enjoyable scrolling down one
 enormous page of events (assuming I got an enormous number of event submissions
 of course). However, Jekyll doesn't support pagination with anything other than
 posts and whilst there is a
@@ -62,9 +65,9 @@ posts.
 
 So if I really wanted pagination (and I did) I had to look at a different model
 for populating the website event data. In particular I had to find a way to turn
-the events in the YAML file into markdown posts. Enter GitHub actions...
+the events in the YAML file into markdown posts. Enter GitHub Actions...
 
-## GitHub actions 
+## GitHub Actions 
 
 To solve my issue of converting YAML data to markdown I fell back to my old
 trusty friend Python and more specifically the
@@ -74,8 +77,8 @@ Jinja and just write these files into the `_posts` directory. This would allow
 me to avoid duplicating data across the site and also preserve the YAML file
 that was used to generate the ICalendar files. 
 
-GitHub actions provides a mechanism why which I can run this Python script to
-generate posts only when building the site for deploying to GitHub pages. This
+GitHub Actions provides a mechanism by which I can run this Python script to
+generate posts only when building the site for deploying to GitHub Pages. This
 ensures when developing the site I don't create undue duplications between the
 calendar data in the YAML file and in any generated posts. I'm still adhering to
 the principle of keeping the YAML file as the central data around which the site
@@ -85,7 +88,7 @@ is built.
 
 However, we have one slight problem with Jekyll and using posts. Jekyll by
 default is for blogging, where posts are expected to be in the past, but for our
-calendar all events will be in the future so how do we make jekyll show posts
+calendar all events will be in the future so how do we make Jekyll show posts
 with a future date?
 
 This isn't such a hurdle as it might seem, Jekyll allows for a configuration
@@ -111,16 +114,15 @@ pagination:
 
 This is great! It means that my posts model for building the calendar site is a
 go-er. It means when building the site Jekyll does actually publish the markdown
-posts generated for future dated events an absolute requirement for this site to
+posts generated for future dated events, an absolute requirement for this site to
 work!
 
 To support this the Python script described above also only generates posts
-which are dated in the future from the time of execution. Only generating posts
-that are in the future ensures the site only pulls through future events because
-Jekyll just assumes this is a blog where we've set future
-to true.
+which are dated in the future from the time of execution. Only generating future
+posts ensures Jekyll doesn't revert to its default blog behaviour and start
+showing a mix of events that have happened and events in the future.
 
-> One thing I'm actually looking at is how to support upcoming events, as the model described
+> One thing I'm actually looking at is how to support ongoing events, as the model described
 > here means an event is "popped" out of the calendar when its start time has
 > passed. This works fine for events that are short in duration, but for a long
 > on-going event (multiple days) it would be better to only "pop" the event from
@@ -128,12 +130,13 @@ to true.
 > [#67](https://github.com/Sparrow0hawk/rse-calendar/pull/67)).
 
 At this point I'd roughly got myself to where I wanted to be. We had our central
-YAML file containing events that we could build a ICalendar file from but we
-could also, using GitHub actions + Python + Jinja, create markdown posts to
-populate our paginated site home page. We've got an, albeit quite simple,
+YAML file containing events that we could build a ICalendar file from using
+[git-calendar](https://github.com/coderefinery/git-calendar) but also,
+using GitHub Actions + Python + Jinja, create markdown posts to
+populate our paginated event listing site. We've got an, albeit quite simple,
 calendar site that users could browse or subscribe their calendar clients too. 
 
-I configured the GitHub actions to run every day so if there are no pull
+I configured the GitHub Actions to run every day so if there are no pull
 requests merged it refreshes the calendar each day, and added some pages
 detailing how to add events and a little about page. All I needed were some
 contributors! 
@@ -141,16 +144,16 @@ contributors!
 ## Codeless contributions
 
 I posted in [RSE slack](https://society-rse.org/join-us/) about my project and
-had some interest and my first contributor (<3)! Through this process though
+had some interest and my first contributor (<3)! Through this process
 they suggested I should have a think about other ways people could contribute an
-event, as quite fairly the barrier to entry was quite high (fork repo, edit
-locally create a PR). For someone not familiar with git or GitHub this is a real
+event as, quite fairly, the barrier to entry was quite high (fork repo, edit
+locally, create a PR). For someone not familiar with git or GitHub this is a real
 challenge to getting your event on this site. 
 
 GitHub Pages only hosts static content so you can't use HTTP POST requests to do
-any nice form based submissions (to my knowledge). So I needed another way to
+any form based submissions (to my knowledge). So I needed another way to
 enable codeless contributions. My hunch here was that we could probably wire up
-a GitHub action to trigger on an issue with a certain label being added. I could
+a GitHub Action to trigger on an issue with a certain label being added. I could
 draft a template issue with this label that included some content that mapped to the YAML fields
 and pull that out of the issue and append it to my main YAML file and create a
 pull request.
@@ -181,7 +184,9 @@ anyone contributing via a pull request.
 
 Putting this altogether I could now:
 
-- Have a template issue with a YAML code block that matched the right keys for
+- Have a [template
+  issue](https://github.com/Sparrow0hawk/rse-calendar/blob/main/.github/ISSUE_TEMPLATE/add-an-event-template.md)
+  with a YAML code block that matched the right keys for
   adding an event
 - Use an existing action to retrieve this YAML block from an issue raised with
   an `add-event` label
@@ -209,7 +214,7 @@ result](https://sparrow0hawk.github.io/rse-calendar/) it does what it's billed,
 and whilst I'm sure there's probably a better way to do this that doesn't
 involve slightly abusing Jekyll's blog logic I worked with what I had.
 
-The codeless contributing bit I find particularly nice as a concept (it's
+The codeless contributing bit I find particularly satisfying as a concept (it's
 execution is certainly not perfect and still needs tweaking as seen from peoples
 attempts to use it!). The fact you can trigger a whole process that suggests an
 automated pull request just from an issue feels like a really nice way to
