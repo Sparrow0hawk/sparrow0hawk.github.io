@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+      <!-- Enable responsiveness on mobile devices-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <title>Alex Coleman</title>
+      
+      
+        <meta name="test">
+        <link rel="apple-touch-icon" sizes="180x180" href="https://sparrow0hawk.github.io/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="https://sparrow0hawk.github.io/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="https://sparrow0hawk.github.io/favicon-16x16.png">
+        <link rel="manifest" href="https://sparrow0hawk.github.io/site.webmanifest">
+      
+
+      
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="https://sparrow0hawk.github.io/atom.xml">
+      
+
+      <!-- have a look here
+https://github.com/not-matthias/apollo/blob/649e3e8f21667efe4dc41e5d539745418b831e95/templates/partials/header.html
+-->
+
+
+<meta property="og:title" content="Making a calendar website with Jekyll and GitHub pages">
+
+
+<meta property="og:type" content="article" />
+<meta property="og:description" content=" Alex&#x27;s Coleman&#x27;s personal site and blog">
+<!-- TODO <meta property="og:image" content="http://euro-travel-example.com/thumbnail.jpg"> -->
+<meta name="twitter:card" content="summary_large_image">
+
+
+
+      
+          <link rel="stylesheet" href="https://sparrow0hawk.github.io/site.css">
+      
+
+      
+      
+    </head>
+
+    <body class="hack dark main container">
+        
+    
+        
+                
+                    <header>
+                        <nav itemscope itemtype="http://schema.org/SiteNavigationElement">
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;sparrow0hawk.github.io">
+                                <span itemprop="name">Home</span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;sparrow0hawk.github.io&#x2F;about">
+                                <span itemprop="name">About</span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;github.com&#x2F;Sparrow0hawk&#x2F;">
+                                <span itemprop="name">GitHub</span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;twitter.com&#x2F;Alex_C0leman">
+                                <span itemprop="name">Twitter</span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;sparrow0hawk.github.io&#x2F;learn_rust">
+                                <span itemprop="name">Learn Rust🦀</span></a>
+                        
+                        </nav>
+                    </header>
+                
+            
+    
+
+<article itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+        <h1 itemprop="headline">Making a calendar website with Jekyll and GitHub pages</h1>
+        <span class="muted">
+    <svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <circle cx="16" cy="16" r="14"/>
+        <path d="M16 8 L16 16 20 20"/>
+    </svg>
+    <span>11 minute read</span>
+    <svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z"/>
+    </svg>
+
+    Published: 2023-06-18
+</span>
+    </header>
+    <div itemprop="articleBody">
+      <p>Recently, I've been working on a Jekyll-based GitHub Pages site that presents a
+paginated list of upcoming events. It also builds on the <a href="https://github.com/coderefinery/git-calendar">CodeRefinery
+git-calendar</a> tool to generate
+and host ICalendar files to enable people to subscribe calendar apps to it. It's
+been an interesting look at inverting some of Jekyll's normal logic for blog
+posts and using GitHub Actions to build markdown posts from YAML.</p>
+<span id="continue-reading"></span><h2 id="but-why">But why?</h2>
+<p>I've been a trustee for the <a href="https://society-rse.org/">Society of Research Software Engineering</a> since
+September 2022 and have been working on the communications and publicity front
+predominantly. One thing I found is that whilst we have a fantastic Slack space
+where people regularly post about events, we don't have a central calendar that
+allows people to see all these events in one place.</p>
+<p>I stumbled upon the <a href="https://github.com/coderefinery/git-calendar">CodeRefinery
+git-calendar</a> project a few months
+ago and thought it was really cool! You could specify your list of events in
+YAML and use their tool to generate a simple HTML page and some associated
+ICalendar files with your events in. This seemed like a nice solution to my
+problem, we could have research software engineers (RSE) contribute their events
+into a YAML file and build a calendar file from there!</p>
+<p>But I thought, wouldn't it be nice if we could also display these events on a
+web page. The CodeRefinery project created a simple HTML page explaining how to
+subscribe to the ICalendar files but I wanted to go further and also list
+upcoming events. Now, I've messed around with GitHub Pages and Jekyll before so I knew
+that Jekyll allowed you to use YAML files as data to populate pages, so I figured
+maybe I could pull data from this calendar YAML file into a GitHub Pages site as
+well as build an ICalendar file from it.</p>
+<p>This led to what I described as the <a href="https://github.com/Sparrow0hawk/rse-calendar/releases/tag/v0.1.0">_data
+model</a> for
+this calendar website. And this by and large worked, it allowed me to create a
+single home page using Jekyll, the <a href="https://github.com/jekyll/minima">minima
+theme</a> and GitHub Pages that populated a list
+of events and their associated metadata. What I realised however was that
+I couldn't implement nice pagination with this model because of limitations with
+how Jekyll pagination behaves, my best approach for getting nice pagination was
+to change the model of my site to using posts.</p>
+<h2 id="jekyll-blogs-and-pagination">Jekyll blogs and pagination</h2>
+<p>Jekyll out-of-the-box makes it easy for you to write a blog using their tool.
+You have a <code>_posts</code> directory and you write your markdown-based blog posts and
+pop them in their and it turns them into lovely looking blog pages. That's how
+we did blog posts as <a href="https://arc.leeds.ac.uk/blog/">Research Computing at the University of
+Leeds</a> and it works very nicely, including support
+for pagination.</p>
+<p>Pagination, or splitting posts across multiple pages was something I definitely
+wanted for the calendar site as it's not particularly enjoyable scrolling down one
+enormous page of events (assuming I got an enormous number of event submissions
+of course). However, Jekyll doesn't support pagination with anything other than
+posts and whilst there is a
+<a href="https://github.com/sverrirs/jekyll-paginate-v2">jekyll-paginate-v2</a> gem it
+still didn't allow you to do pagination with anything other than things like
+posts.</p>
+<p>So if I really wanted pagination (and I did) I had to look at a different model
+for populating the website event data. In particular I had to find a way to turn
+the events in the YAML file into markdown posts. Enter GitHub Actions...</p>
+<h2 id="github-actions">GitHub Actions</h2>
+<p>To solve my issue of converting YAML data to markdown I fell back to my old
+trusty friend Python and more specifically the
+<a href="https://jinja.palletsprojects.com/en/3.1.x/">Jinja</a> templating tool. I could
+write a template markdown file that could be populated from a YAML file using
+Jinja and just write these files into the <code>_posts</code> directory. This would allow
+me to avoid duplicating data across the site and also preserve the YAML file
+that was used to generate the ICalendar files. </p>
+<p>GitHub Actions provides a mechanism by which I can run this Python script to
+generate posts only when building the site for deploying to GitHub Pages. This
+ensures when developing the site I don't create undue duplications between the
+calendar data in the YAML file and in any generated posts. I'm still adhering to
+the principle of keeping the YAML file as the central data around which the site
+is built.</p>
+<h2 id="inverting-jekyll-blog-logic">Inverting Jekyll blog logic</h2>
+<p>However, we have one slight problem with Jekyll and using posts. Jekyll by
+default is for blogging, where posts are expected to be in the past, but for our
+calendar all events will be in the future so how do we make Jekyll show posts
+with a future date?</p>
+<p>This isn't such a hurdle as it might seem, Jekyll allows for a configuration
+option within <code>_config.yml</code> that allows us to publish posts with a future date:</p>
+<pre data-lang="yml" style="background-color:#2b303b;color:#c0c5ce;" class="language-yml "><code class="language-yml" data-lang="yml"><span style="color:#65737e;"># publish posts with a future date
+</span><span style="color:#bf616a;">future</span><span>: </span><span style="color:#d08770;">true
+</span></code></pre>
+<p>I also configure
+<a href="https://github.com/sverrirs/jekyll-paginate-v2">jekyll-paginate-v2</a> to sort
+posts for pagination by date. This ensures pagination on the home page with events
+listed in upcoming order.</p>
+<pre data-lang="yml" style="background-color:#2b303b;color:#c0c5ce;" class="language-yml "><code class="language-yml" data-lang="yml"><span style="color:#bf616a;">pagination</span><span>:
+</span><span>  </span><span style="color:#bf616a;">enabled</span><span>: </span><span style="color:#d08770;">true
+</span><span>  </span><span style="color:#bf616a;">per_page</span><span>: </span><span style="color:#d08770;">5
+</span><span>  </span><span style="color:#bf616a;">permalink</span><span>: &quot;</span><span style="color:#a3be8c;">/page:num/</span><span>&quot;
+</span><span>  </span><span style="color:#bf616a;">sort_field</span><span>: &quot;</span><span style="color:#a3be8c;">date</span><span>&quot;
+</span></code></pre>
+<p>This is great! It means that my posts model for building the calendar site is a
+go-er. It means when building the site Jekyll does actually publish the markdown
+posts generated for future dated events, an absolute requirement for this site to
+work!</p>
+<p>To support this the Python script described above also only generates posts
+which are dated in the future from the time of execution. Only generating future
+posts ensures Jekyll doesn't revert to its default blog behaviour and start
+showing a mix of events that have happened and events in the future.</p>
+<blockquote>
+<p>One thing I'm actually looking at is how to support ongoing events, as the model described
+here means an event is &quot;popped&quot; out of the calendar when its start time has
+passed. This works fine for events that are short in duration, but for a long
+on-going event (multiple days) it would be better to only &quot;pop&quot; the event from
+the calendar when it has finished (see
+<a href="https://github.com/Sparrow0hawk/rse-calendar/pull/67">#67</a>).</p>
+</blockquote>
+<p>At this point I'd roughly got myself to where I wanted to be. We had our central
+YAML file containing events that we could build a ICalendar file from using
+<a href="https://github.com/coderefinery/git-calendar">git-calendar</a> but also,
+using GitHub Actions + Python + Jinja, create markdown posts to
+populate our paginated event listing site. We've got an, albeit quite simple,
+calendar site that users could browse or subscribe their calendar clients too. </p>
+<p>I configured the GitHub Actions to run every day so if there are no pull
+requests merged it refreshes the calendar each day, and added some pages
+detailing how to add events and a little about page. All I needed were some
+contributors! </p>
+<h2 id="codeless-contributions">Codeless contributions</h2>
+<p>I posted in <a href="https://society-rse.org/join-us/">RSE slack</a> about my project and
+had some interest and my first contributor (&lt;3)! Through this process
+they suggested I should have a think about other ways people could contribute an
+event as, quite fairly, the barrier to entry was quite high (fork repo, edit
+locally, create a PR). For someone not familiar with git or GitHub this is a real
+challenge to getting your event on this site. </p>
+<p>GitHub Pages only hosts static content so you can't use HTTP POST requests to do
+any form based submissions (to my knowledge). So I needed another way to
+enable codeless contributions. My hunch here was that we could probably wire up
+a GitHub Action to trigger on an issue with a certain label being added. I could
+draft a template issue with this label that included some content that mapped to the YAML fields
+and pull that out of the issue and append it to my main YAML file and create a
+pull request.</p>
+<p>Conveniently there already exists an action that will <a href="https://github.com/peter-murray/issue-body-parser-action">retrieve YAML or JSON from
+code blocks within GitHub
+Issues</a>. This was
+ideal, I could draft a template issue with a YAML block that matches the format
+of an event in my site YAML file and this action would extract that content. The
+more complicated part turned out to be getting this data and appending it to my
+existing YAML file.</p>
+<p>The
+<a href="https://github.com/peter-murray/issue-body-parser-action">issue-body-parser-action</a>
+I used returned the content of the code block as JSON so I now needed a process
+that converted that JSON back into YAML and appended it, at the correct level to
+my existing YAML file. For this I turned to Javascript, a language I'm less
+familiar with than Python but one that has a rather nice library for
+manipulating <a href="https://eemeli.org/yaml/#yaml">YAML</a> with. After a bit of back and
+forth with ChatGPT I settled on a rather <a href="https://github.com/Sparrow0hawk/rse-calendar/blob/main/_scripts/issue_to_event/index.js">rough and ready
+script</a>
+that did the job, although with no validation. The key thing that really helped
+here and why I picked JS was the support in the
+<a href="https://eemeli.org/yaml/#yaml"><code>yaml</code></a> package for YAML features not directly
+supported by JS types (<a href="https://eemeli.org/yaml/#documents">Document API</a>). This
+meant I could preserve comments in my original data file that I wanted there for
+anyone contributing via a pull request.</p>
+<p>Putting this altogether I could now:</p>
+<ul>
+<li>Have a <a href="https://github.com/Sparrow0hawk/rse-calendar/blob/main/.github/ISSUE_TEMPLATE/add-an-event-template.md">template
+issue</a>
+with a YAML code block that matched the right keys for
+adding an event</li>
+<li>Use an existing action to retrieve this YAML block from an issue raised with
+an <code>add-event</code> label</li>
+<li>Using the JSON from the above action convert it to YAML and append it to my
+existing calendar data file</li>
+</ul>
+<p>The final step was to have the action contribute this amended calendar YAML file
+back to the <code>main</code> branch as a PR, and preferably include the issue creator as
+the contributor.</p>
+<p>Again, there already was a GitHub action for that! The fantastic
+<a href="https://github.com/peter-evans/create-pull-request">create-pull-request</a> action
+makes it easy to handle committing any changes, making a branch and opening a
+pull request with these changes. I can configure the details of who the committer
+is so that it uses information about the user who opened the issue, as well as
+pull request title and more! This was perfect for what I wanted and completed my
+<a href="https://github.com/Sparrow0hawk/rse-calendar/blob/main/.github/workflows/issue_to_pull.yml">codeless contributing
+action</a>
+nicely.</p>
+<h2 id="did-you-really-have-to-do-all-that">Did you really have to do all that?</h2>
+<p>I'm reasonably pleased with the <a href="https://sparrow0hawk.github.io/rse-calendar/">end
+result</a> it does what it's billed,
+and whilst I'm sure there's probably a better way to do this that doesn't
+involve slightly abusing Jekyll's blog logic I worked with what I had.</p>
+<p>The codeless contributing bit I find particularly satisfying as a concept (it's
+execution is certainly not perfect and still needs tweaking as seen from peoples
+attempts to use it!). The fact you can trigger a whole process that suggests an
+automated pull request just from an issue feels like a really nice way to
+encourage contributions.</p>
+<p>The model I've adopted here for creating a calendar is absolutely transferrable
+to other communities who want to centralise their events. All you need to do is
+configure the YAML file and update some of the site configuration in
+<code>_config.yml</code>. So if you have a need to an events calendar and have an audience
+that is technically please feel free to check out this tool.</p>
+<p>For now, if you're an RSE with an event you want to share please feel free to
+<a href="https://sparrow0hawk.github.io/rse-calendar/add-event/">contribute it to the
+site</a>. If you're an RSE
+on the look out for events check out how to subscribe your calendar client to
+the <a href="https://sparrow0hawk.github.io/rse-calendar/subscribe/">ICalendar files</a>.
+I'll continue to be tinkering with this for a while so if you've got suggestions
+for making it better do <a href="https://github.com/Sparrow0hawk/rse-calendar/issues/new">get in
+touch</a>!</p>
+<p>And if you've got this far and care about the software that drives research
+across the world and in the UK, this is your regular reminder to support the
+Society of Research Software Engineering by <a href="https://society-rse.org/join-us/">becoming a member
+now</a> (you don't have to be an RSE)!</p>
+
+    </div>
+
+    
+        <footer>
+            <hr>
+            <p>
+                
+                
+                
+            </p>
+            
+            
+        </footer>
+    
+</article>
+<script src="https://utteranc.es/client.js"
+        repo="sparrow0hawk/sparrow0hawk.github.io"
+        issue-term="pathname"
+        theme="github-dark"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+    </body>
+
+</html>

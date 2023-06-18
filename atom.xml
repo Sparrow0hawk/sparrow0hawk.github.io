@@ -1,0 +1,814 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en">
+    <title>Alex Coleman</title>
+    <subtitle>Alex&#x27;s Coleman&#x27;s personal site and blog</subtitle>
+    <link href="https://sparrow0hawk.github.io/atom.xml" rel="self" type="application/atom+xml"/>
+    <link href="https://sparrow0hawk.github.io"/>
+    <generator uri="https://www.getzola.org/">Zola</generator>
+    <updated>2023-06-18T00:00:00+00:00</updated>
+    <id>https://sparrow0hawk.github.io/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Making a calendar website with Jekyll and GitHub pages</title>
+        <published>2023-06-18T00:00:00+00:00</published>
+        <updated>2023-06-18T00:00:00+00:00</updated>
+        <author>
+          <name>Alex Coleman</name>
+        </author>
+        <link rel="alternate" href="https://sparrow0hawk.github.io/jekyll-calendar/" type="text/html"/>
+        <id>https://sparrow0hawk.github.io/jekyll-calendar/</id>
+        <content type="html">&lt;p&gt;Recently, I&#x27;ve been working on a Jekyll-based GitHub Pages site that presents a
+paginated list of upcoming events. It also builds on the &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;coderefinery&#x2F;git-calendar&quot;&gt;CodeRefinery
+git-calendar&lt;&#x2F;a&gt; tool to generate
+and host ICalendar files to enable people to subscribe calendar apps to it. It&#x27;s
+been an interesting look at inverting some of Jekyll&#x27;s normal logic for blog
+posts and using GitHub Actions to build markdown posts from YAML.&lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;&lt;h2 id=&quot;but-why&quot;&gt;But why?&lt;&#x2F;h2&gt;
+&lt;p&gt;I&#x27;ve been a trustee for the &lt;a href=&quot;https:&#x2F;&#x2F;society-rse.org&#x2F;&quot;&gt;Society of Research Software Engineering&lt;&#x2F;a&gt; since
+September 2022 and have been working on the communications and publicity front
+predominantly. One thing I found is that whilst we have a fantastic Slack space
+where people regularly post about events, we don&#x27;t have a central calendar that
+allows people to see all these events in one place.&lt;&#x2F;p&gt;
+&lt;p&gt;I stumbled upon the &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;coderefinery&#x2F;git-calendar&quot;&gt;CodeRefinery
+git-calendar&lt;&#x2F;a&gt; project a few months
+ago and thought it was really cool! You could specify your list of events in
+YAML and use their tool to generate a simple HTML page and some associated
+ICalendar files with your events in. This seemed like a nice solution to my
+problem, we could have research software engineers (RSE) contribute their events
+into a YAML file and build a calendar file from there!&lt;&#x2F;p&gt;
+&lt;p&gt;But I thought, wouldn&#x27;t it be nice if we could also display these events on a
+web page. The CodeRefinery project created a simple HTML page explaining how to
+subscribe to the ICalendar files but I wanted to go further and also list
+upcoming events. Now, I&#x27;ve messed around with GitHub Pages and Jekyll before so I knew
+that Jekyll allowed you to use YAML files as data to populate pages, so I figured
+maybe I could pull data from this calendar YAML file into a GitHub Pages site as
+well as build an ICalendar file from it.&lt;&#x2F;p&gt;
+&lt;p&gt;This led to what I described as the &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Sparrow0hawk&#x2F;rse-calendar&#x2F;releases&#x2F;tag&#x2F;v0.1.0&quot;&gt;_data
+model&lt;&#x2F;a&gt; for
+this calendar website. And this by and large worked, it allowed me to create a
+single home page using Jekyll, the &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;jekyll&#x2F;minima&quot;&gt;minima
+theme&lt;&#x2F;a&gt; and GitHub Pages that populated a list
+of events and their associated metadata. What I realised however was that
+I couldn&#x27;t implement nice pagination with this model because of limitations with
+how Jekyll pagination behaves, my best approach for getting nice pagination was
+to change the model of my site to using posts.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;jekyll-blogs-and-pagination&quot;&gt;Jekyll blogs and pagination&lt;&#x2F;h2&gt;
+&lt;p&gt;Jekyll out-of-the-box makes it easy for you to write a blog using their tool.
+You have a &lt;code&gt;_posts&lt;&#x2F;code&gt; directory and you write your markdown-based blog posts and
+pop them in their and it turns them into lovely looking blog pages. That&#x27;s how
+we did blog posts as &lt;a href=&quot;https:&#x2F;&#x2F;arc.leeds.ac.uk&#x2F;blog&#x2F;&quot;&gt;Research Computing at the University of
+Leeds&lt;&#x2F;a&gt; and it works very nicely, including support
+for pagination.&lt;&#x2F;p&gt;
+&lt;p&gt;Pagination, or splitting posts across multiple pages was something I definitely
+wanted for the calendar site as it&#x27;s not particularly enjoyable scrolling down one
+enormous page of events (assuming I got an enormous number of event submissions
+of course). However, Jekyll doesn&#x27;t support pagination with anything other than
+posts and whilst there is a
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;sverrirs&#x2F;jekyll-paginate-v2&quot;&gt;jekyll-paginate-v2&lt;&#x2F;a&gt; gem it
+still didn&#x27;t allow you to do pagination with anything other than things like
+posts.&lt;&#x2F;p&gt;
+&lt;p&gt;So if I really wanted pagination (and I did) I had to look at a different model
+for populating the website event data. In particular I had to find a way to turn
+the events in the YAML file into markdown posts. Enter GitHub Actions...&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;github-actions&quot;&gt;GitHub Actions&lt;&#x2F;h2&gt;
+&lt;p&gt;To solve my issue of converting YAML data to markdown I fell back to my old
+trusty friend Python and more specifically the
+&lt;a href=&quot;https:&#x2F;&#x2F;jinja.palletsprojects.com&#x2F;en&#x2F;3.1.x&#x2F;&quot;&gt;Jinja&lt;&#x2F;a&gt; templating tool. I could
+write a template markdown file that could be populated from a YAML file using
+Jinja and just write these files into the &lt;code&gt;_posts&lt;&#x2F;code&gt; directory. This would allow
+me to avoid duplicating data across the site and also preserve the YAML file
+that was used to generate the ICalendar files. &lt;&#x2F;p&gt;
+&lt;p&gt;GitHub Actions provides a mechanism by which I can run this Python script to
+generate posts only when building the site for deploying to GitHub Pages. This
+ensures when developing the site I don&#x27;t create undue duplications between the
+calendar data in the YAML file and in any generated posts. I&#x27;m still adhering to
+the principle of keeping the YAML file as the central data around which the site
+is built.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;inverting-jekyll-blog-logic&quot;&gt;Inverting Jekyll blog logic&lt;&#x2F;h2&gt;
+&lt;p&gt;However, we have one slight problem with Jekyll and using posts. Jekyll by
+default is for blogging, where posts are expected to be in the past, but for our
+calendar all events will be in the future so how do we make Jekyll show posts
+with a future date?&lt;&#x2F;p&gt;
+&lt;p&gt;This isn&#x27;t such a hurdle as it might seem, Jekyll allows for a configuration
+option within &lt;code&gt;_config.yml&lt;&#x2F;code&gt; that allows us to publish posts with a future date:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;yml&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-yml &quot;&gt;&lt;code class=&quot;language-yml&quot; data-lang=&quot;yml&quot;&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# publish posts with a future date
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;future&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;true
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;I also configure
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;sverrirs&#x2F;jekyll-paginate-v2&quot;&gt;jekyll-paginate-v2&lt;&#x2F;a&gt; to sort
+posts for pagination by date. This ensures pagination on the home page with events
+listed in upcoming order.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;yml&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-yml &quot;&gt;&lt;code class=&quot;language-yml&quot; data-lang=&quot;yml&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pagination&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;enabled&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;true
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;per_page&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;5
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;permalink&lt;&#x2F;span&gt;&lt;span&gt;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;&#x2F;page:num&#x2F;&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;sort_field&lt;&#x2F;span&gt;&lt;span&gt;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;date&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This is great! It means that my posts model for building the calendar site is a
+go-er. It means when building the site Jekyll does actually publish the markdown
+posts generated for future dated events, an absolute requirement for this site to
+work!&lt;&#x2F;p&gt;
+&lt;p&gt;To support this the Python script described above also only generates posts
+which are dated in the future from the time of execution. Only generating future
+posts ensures Jekyll doesn&#x27;t revert to its default blog behaviour and start
+showing a mix of events that have happened and events in the future.&lt;&#x2F;p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;One thing I&#x27;m actually looking at is how to support ongoing events, as the model described
+here means an event is &amp;quot;popped&amp;quot; out of the calendar when its start time has
+passed. This works fine for events that are short in duration, but for a long
+on-going event (multiple days) it would be better to only &amp;quot;pop&amp;quot; the event from
+the calendar when it has finished (see
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Sparrow0hawk&#x2F;rse-calendar&#x2F;pull&#x2F;67&quot;&gt;#67&lt;&#x2F;a&gt;).&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;At this point I&#x27;d roughly got myself to where I wanted to be. We had our central
+YAML file containing events that we could build a ICalendar file from using
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;coderefinery&#x2F;git-calendar&quot;&gt;git-calendar&lt;&#x2F;a&gt; but also,
+using GitHub Actions + Python + Jinja, create markdown posts to
+populate our paginated event listing site. We&#x27;ve got an, albeit quite simple,
+calendar site that users could browse or subscribe their calendar clients too. &lt;&#x2F;p&gt;
+&lt;p&gt;I configured the GitHub Actions to run every day so if there are no pull
+requests merged it refreshes the calendar each day, and added some pages
+detailing how to add events and a little about page. All I needed were some
+contributors! &lt;&#x2F;p&gt;
+&lt;h2 id=&quot;codeless-contributions&quot;&gt;Codeless contributions&lt;&#x2F;h2&gt;
+&lt;p&gt;I posted in &lt;a href=&quot;https:&#x2F;&#x2F;society-rse.org&#x2F;join-us&#x2F;&quot;&gt;RSE slack&lt;&#x2F;a&gt; about my project and
+had some interest and my first contributor (&amp;lt;3)! Through this process
+they suggested I should have a think about other ways people could contribute an
+event as, quite fairly, the barrier to entry was quite high (fork repo, edit
+locally, create a PR). For someone not familiar with git or GitHub this is a real
+challenge to getting your event on this site. &lt;&#x2F;p&gt;
+&lt;p&gt;GitHub Pages only hosts static content so you can&#x27;t use HTTP POST requests to do
+any form based submissions (to my knowledge). So I needed another way to
+enable codeless contributions. My hunch here was that we could probably wire up
+a GitHub Action to trigger on an issue with a certain label being added. I could
+draft a template issue with this label that included some content that mapped to the YAML fields
+and pull that out of the issue and append it to my main YAML file and create a
+pull request.&lt;&#x2F;p&gt;
+&lt;p&gt;Conveniently there already exists an action that will &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;peter-murray&#x2F;issue-body-parser-action&quot;&gt;retrieve YAML or JSON from
+code blocks within GitHub
+Issues&lt;&#x2F;a&gt;. This was
+ideal, I could draft a template issue with a YAML block that matches the format
+of an event in my site YAML file and this action would extract that content. The
+more complicated part turned out to be getting this data and appending it to my
+existing YAML file.&lt;&#x2F;p&gt;
+&lt;p&gt;The
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;peter-murray&#x2F;issue-body-parser-action&quot;&gt;issue-body-parser-action&lt;&#x2F;a&gt;
+I used returned the content of the code block as JSON so I now needed a process
+that converted that JSON back into YAML and appended it, at the correct level to
+my existing YAML file. For this I turned to Javascript, a language I&#x27;m less
+familiar with than Python but one that has a rather nice library for
+manipulating &lt;a href=&quot;https:&#x2F;&#x2F;eemeli.org&#x2F;yaml&#x2F;#yaml&quot;&gt;YAML&lt;&#x2F;a&gt; with. After a bit of back and
+forth with ChatGPT I settled on a rather &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Sparrow0hawk&#x2F;rse-calendar&#x2F;blob&#x2F;main&#x2F;_scripts&#x2F;issue_to_event&#x2F;index.js&quot;&gt;rough and ready
+script&lt;&#x2F;a&gt;
+that did the job, although with no validation. The key thing that really helped
+here and why I picked JS was the support in the
+&lt;a href=&quot;https:&#x2F;&#x2F;eemeli.org&#x2F;yaml&#x2F;#yaml&quot;&gt;&lt;code&gt;yaml&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; package for YAML features not directly
+supported by JS types (&lt;a href=&quot;https:&#x2F;&#x2F;eemeli.org&#x2F;yaml&#x2F;#documents&quot;&gt;Document API&lt;&#x2F;a&gt;). This
+meant I could preserve comments in my original data file that I wanted there for
+anyone contributing via a pull request.&lt;&#x2F;p&gt;
+&lt;p&gt;Putting this altogether I could now:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;Have a &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Sparrow0hawk&#x2F;rse-calendar&#x2F;blob&#x2F;main&#x2F;.github&#x2F;ISSUE_TEMPLATE&#x2F;add-an-event-template.md&quot;&gt;template
+issue&lt;&#x2F;a&gt;
+with a YAML code block that matched the right keys for
+adding an event&lt;&#x2F;li&gt;
+&lt;li&gt;Use an existing action to retrieve this YAML block from an issue raised with
+an &lt;code&gt;add-event&lt;&#x2F;code&gt; label&lt;&#x2F;li&gt;
+&lt;li&gt;Using the JSON from the above action convert it to YAML and append it to my
+existing calendar data file&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;The final step was to have the action contribute this amended calendar YAML file
+back to the &lt;code&gt;main&lt;&#x2F;code&gt; branch as a PR, and preferably include the issue creator as
+the contributor.&lt;&#x2F;p&gt;
+&lt;p&gt;Again, there already was a GitHub action for that! The fantastic
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;peter-evans&#x2F;create-pull-request&quot;&gt;create-pull-request&lt;&#x2F;a&gt; action
+makes it easy to handle committing any changes, making a branch and opening a
+pull request with these changes. I can configure the details of who the committer
+is so that it uses information about the user who opened the issue, as well as
+pull request title and more! This was perfect for what I wanted and completed my
+&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Sparrow0hawk&#x2F;rse-calendar&#x2F;blob&#x2F;main&#x2F;.github&#x2F;workflows&#x2F;issue_to_pull.yml&quot;&gt;codeless contributing
+action&lt;&#x2F;a&gt;
+nicely.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;did-you-really-have-to-do-all-that&quot;&gt;Did you really have to do all that?&lt;&#x2F;h2&gt;
+&lt;p&gt;I&#x27;m reasonably pleased with the &lt;a href=&quot;https:&#x2F;&#x2F;sparrow0hawk.github.io&#x2F;rse-calendar&#x2F;&quot;&gt;end
+result&lt;&#x2F;a&gt; it does what it&#x27;s billed,
+and whilst I&#x27;m sure there&#x27;s probably a better way to do this that doesn&#x27;t
+involve slightly abusing Jekyll&#x27;s blog logic I worked with what I had.&lt;&#x2F;p&gt;
+&lt;p&gt;The codeless contributing bit I find particularly satisfying as a concept (it&#x27;s
+execution is certainly not perfect and still needs tweaking as seen from peoples
+attempts to use it!). The fact you can trigger a whole process that suggests an
+automated pull request just from an issue feels like a really nice way to
+encourage contributions.&lt;&#x2F;p&gt;
+&lt;p&gt;The model I&#x27;ve adopted here for creating a calendar is absolutely transferrable
+to other communities who want to centralise their events. All you need to do is
+configure the YAML file and update some of the site configuration in
+&lt;code&gt;_config.yml&lt;&#x2F;code&gt;. So if you have a need to an events calendar and have an audience
+that is technically please feel free to check out this tool.&lt;&#x2F;p&gt;
+&lt;p&gt;For now, if you&#x27;re an RSE with an event you want to share please feel free to
+&lt;a href=&quot;https:&#x2F;&#x2F;sparrow0hawk.github.io&#x2F;rse-calendar&#x2F;add-event&#x2F;&quot;&gt;contribute it to the
+site&lt;&#x2F;a&gt;. If you&#x27;re an RSE
+on the look out for events check out how to subscribe your calendar client to
+the &lt;a href=&quot;https:&#x2F;&#x2F;sparrow0hawk.github.io&#x2F;rse-calendar&#x2F;subscribe&#x2F;&quot;&gt;ICalendar files&lt;&#x2F;a&gt;.
+I&#x27;ll continue to be tinkering with this for a while so if you&#x27;ve got suggestions
+for making it better do &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Sparrow0hawk&#x2F;rse-calendar&#x2F;issues&#x2F;new&quot;&gt;get in
+touch&lt;&#x2F;a&gt;!&lt;&#x2F;p&gt;
+&lt;p&gt;And if you&#x27;ve got this far and care about the software that drives research
+across the world and in the UK, this is your regular reminder to support the
+Society of Research Software Engineering by &lt;a href=&quot;https:&#x2F;&#x2F;society-rse.org&#x2F;join-us&#x2F;&quot;&gt;becoming a member
+now&lt;&#x2F;a&gt; (you don&#x27;t have to be an RSE)!&lt;&#x2F;p&gt;
+</content>
+    </entry>
+    <entry xml:lang="en">
+        <title>Research Security Snippets #2 Secret stuff</title>
+        <published>2023-06-08T00:00:00+00:00</published>
+        <updated>2023-06-08T00:00:00+00:00</updated>
+        <author>
+          <name>Alex Coleman</name>
+        </author>
+        <link rel="alternate" href="https://sparrow0hawk.github.io/research-software-security-snippet-2/" type="text/html"/>
+        <id>https://sparrow0hawk.github.io/research-software-security-snippet-2/</id>
+        <content type="html">&lt;blockquote&gt;
+&lt;p&gt;A big thank you to Samantha Finnigan, RSE from Durham for helping co-author this post
+and advice on content&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;In this instalment of Research Software security snippets, we&#x27;re going to talk
+about secrets! Not those deep and darkest things, but rather all those bits of
+information you need in your code for it to run that you don’t want shared with
+everyone else.&lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;&lt;h2 id=&quot;secrets-and-environments&quot;&gt;Secrets and Environments&lt;&#x2F;h2&gt;
+&lt;p&gt;Let’s start off by defining these secrets. A secret is something like an API key, a
+password, username, database key or authentication token that your code uses to
+run, but that is a private piece of information you wouldn’t want to share.
+Including these secrets publicly in our source code a bad idea. They expose us
+to bad actors who could impersonate us to access systems or use APIs we’re
+paying for (some of a few potential bad examples). Secret leakage is a major
+cause of security incidents at companies: for example, &lt;a href=&quot;https:&#x2F;&#x2F;blog.gitguardian.com&#x2F;uber-breach-2022&#x2F;amp&#x2F;&quot;&gt;Uber in 2022 was
+breached&lt;&#x2F;a&gt; using hard coded
+admin credentials that allowed attackers to breach their privilege access management platform.&lt;&#x2F;p&gt;
+&lt;p&gt;Leaking secrets is very easy to do. Often the biggest mistake can be hard coding 
+them into our source code and (whilst trying to be good and using version control)
+committing this secret-in-source-code into our version history. We might then push 
+that to a public repository, and voila(!), our secret is publicly available on our
+public source repository! &lt;&#x2F;p&gt;
+&lt;p&gt;Another way that secrets leak is through tools such as Docker. Docker is a
+containerisation tool that allows us to bundle software and its dependencies
+(including operating system dependencies) into a container we can share with
+others. In Docker we might use things like environment variables (more on those
+below) to manage secrets that allow our software to connect to a service, like a
+database, but these environment variables are still encoded within the container
+and anyone  can view them if we make the container publicly available through a
+container repository such as &lt;a href=&quot;https:&#x2F;&#x2F;hub.docker.com&quot;&gt;Docker Hub&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Secrets are a really easy thing to accidentally share when we’re first learning
+about using version control tools like git. We’re trying our hardest to keep
+things versioned, and accidentally commit a file containing our secret. Once the
+file is in our git history it can be difficult&#x2F;painful to extract it (especially
+if we don’t realise this immediately). The first thing to do when using secrets
+within our code is to separate them out from our source code. Secrets shouldn’t
+live within our code, it’s much better to find a way to inject them when our
+code runs. &lt;&#x2F;p&gt;
+&lt;h2 id=&quot;separating-code-and-secrets-environment-variables&quot;&gt;Separating code and secrets: Environment variables&lt;&#x2F;h2&gt;
+&lt;p&gt;The classic way to do this is with environment variables. Environment
+variables are named key&#x2F;value pairs that exist within the system environment. We can
+retrieve the value using the environment variable name because they’re set
+outside our program. They have been historically used as a method for storing
+secrets which we can retrieve in our code:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# main.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span&gt;os
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;print&lt;&#x2F;span&gt;&lt;span&gt;(os.environ[“&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;TEST&lt;&#x2F;span&gt;&lt;span&gt;”])
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;$&lt;&#x2F;span&gt;&lt;span&gt; export TEST=magic-key
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;$&lt;&#x2F;span&gt;&lt;span&gt; python main.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;magic-key
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;From the simplified above example you can hopefully see how you could use
+environment variables to store secrets outside of your code but still retrieve
+them at run time.&lt;&#x2F;p&gt;
+&lt;p&gt;To avoid having to explicitly set all these environment variables before you run
+your code there are a number of packages that let you specify a &lt;code&gt;.env&lt;&#x2F;code&gt; file
+(often called &amp;quot;dotenv&amp;quot;) in which you specify your secrets as key-value pairs.
+For instance (by not exhaustively), in Python there&#x27;s
+&lt;a href=&quot;https:&#x2F;&#x2F;pypi.org&#x2F;project&#x2F;python-decouple&quot;&gt;decouple&lt;&#x2F;a&gt;, in R you can use the
+default &lt;a href=&quot;https:&#x2F;&#x2F;bookdown.org&#x2F;content&#x2F;d1e53ac9-28ce-472f-bc2c-f499f18264a3&#x2F;envManagement.html#use-.renviron-file&quot;&gt;&lt;code&gt;.Renviron&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;
+file. &lt;&#x2F;p&gt;
+&lt;p&gt;This allows you to start to separate your code and your secrets and do so in a
+convenient way. Environment variables aren&#x27;t perfect but they are a good easy
+entry point for starting to secure your code.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;keeping-secrets-out-of-the-public-eye&quot;&gt;Keeping secrets out of the public eye&lt;&#x2F;h2&gt;
+&lt;p&gt;The &lt;code&gt;.env&lt;&#x2F;code&gt; file or &lt;code&gt;.Renviron&lt;&#x2F;code&gt; files should never be commited to version
+control, but allow you on a project-by-project basis to handle secrets using configuration files. &lt;&#x2F;p&gt;
+&lt;p&gt;The &lt;code&gt;.gitignore&lt;&#x2F;code&gt; file is our friend in these situations. If you&#x27;ve used git for
+version control you may or may not be familiar with the &lt;a href=&quot;https:&#x2F;&#x2F;git-scm.com&#x2F;docs&#x2F;gitignore&quot;&gt;&lt;code&gt;.gitignore&lt;&#x2F;code&gt;
+file&lt;&#x2F;a&gt;. Sometimes all we want is to actually
+ignore a file from version control and make sure it isn&#x27;t accidentally added and tracked. &lt;&#x2F;p&gt;
+&lt;p&gt;The &lt;code&gt;.gitignore&lt;&#x2F;code&gt; file is just a text file that lives in the root of our repository. 
+Each line in the file specifies a pattern of file&#x2F;folder names to ignore. This
+allows us to easily specify specific files or patterns (file extensions) that
+should be ignored in our repository. For managing our secrets in a &lt;code&gt;.env&lt;&#x2F;code&gt; file,
+this means we just add &lt;code&gt;.env&lt;&#x2F;code&gt; as a line in our &lt;code&gt;.gitignore&lt;&#x2F;code&gt;, and that file won&#x27;t
+be tracked by git, keeping our secrets out of version control. We should commit
+the &lt;code&gt;.gitignore&lt;&#x2F;code&gt; file into version control, so that cloned versions of our
+repository will also ignore the files listed!&lt;&#x2F;p&gt;
+&lt;p&gt;Docker provides similar functionality through the &lt;code&gt;.dockerignore&lt;&#x2F;code&gt; file.
+Accidentally copying &lt;code&gt;.env&lt;&#x2F;code&gt; files into our Docker images can be surprisingly
+easy, as the following example demonstrates:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;Dockerfile&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-Dockerfile &quot;&gt;&lt;code class=&quot;language-Dockerfile&quot; data-lang=&quot;Dockerfile&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;FROM&lt;&#x2F;span&gt;&lt;span&gt; alpine:latest
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;COPY&lt;&#x2F;span&gt;&lt;span&gt; . .
+&lt;&#x2F;span&gt;&lt;span&gt;CMD [&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;cat&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;.env&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;]
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;The &lt;code&gt;COPY . .&lt;&#x2F;code&gt; command in this Dockerfile was intended to copy our application files, but
+has a potentially unforseen side-effect: it will copy dotfiles (files with a dot
+in front), too! This includes our &lt;code&gt;.env&lt;&#x2F;code&gt; file containing all our secrets:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;$&lt;&#x2F;span&gt;&lt;span&gt; echo &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;# THIS FILE SHOULD NOT BE COPIED!&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot; &amp;gt; .env
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;$&lt;&#x2F;span&gt;&lt;span&gt; docker build&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt; --tag&lt;&#x2F;span&gt;&lt;span&gt;=test .
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;$&lt;&#x2F;span&gt;&lt;span&gt; docker run test
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# THIS FILE SHOULD NOT BE COPIED!
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Oops! &lt;code&gt;.dockerignore&lt;&#x2F;code&gt; uses exactly the same syntax as &lt;code&gt;.gitignore&lt;&#x2F;code&gt;, so an &lt;code&gt;.env&lt;&#x2F;code&gt;
+file can be easily excluded from the Docker image by commiting a &lt;code&gt;.dockerignore&lt;&#x2F;code&gt;
+file with the following content into our repository:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;.gitignore&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-.gitignore &quot;&gt;&lt;code class=&quot;language-.gitignore&quot; data-lang=&quot;.gitignore&quot;&gt;&lt;span&gt;**&#x2F;*.env
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Now when we build and run our example container, the &lt;code&gt;.env&lt;&#x2F;code&gt; file is not included
+by the &lt;code&gt;COPY . .&lt;&#x2F;code&gt; command:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;$&lt;&#x2F;span&gt;&lt;span&gt; docker build&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt; --tag&lt;&#x2F;span&gt;&lt;span&gt;=test .
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;$&lt;&#x2F;span&gt;&lt;span&gt; docker run test
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;cat:&lt;&#x2F;span&gt;&lt;span&gt; can&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;t open &lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;.env&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;: No such file or directory
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;However, the downside of environment variables is that they are still plain text
+within our system, so if the system our code is running on is compromised bad
+actors can still get at our secrets! &lt;&#x2F;p&gt;
+&lt;h2 id=&quot;oops-i-accidentally-committed-a-secret-what-now&quot;&gt;Oops, I accidentally committed a secret. What now?&lt;&#x2F;h2&gt;
+&lt;p&gt;We&#x27;ve now learned how to keep secrets out of our Git repositories in the first
+place, but what happens if we accidentally commit and push them? It&#x27;s too easy
+for something to slip through the net, despite implementing best practices like &lt;code&gt;.gitignore&lt;&#x2F;code&gt; and &lt;code&gt;.dockerignore&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Third-party tools like &lt;a href=&quot;https:&#x2F;&#x2F;gitguardian.com&#x2F;&quot;&gt;GitGuardian&lt;&#x2F;a&gt; (free for teams
+of 25 members or fewer)  can enable us to take corrective action when the worst
+happens. GitGuardian scans repositories against a
+set of definitions for known types of secret, and creates an &amp;quot;Incident&amp;quot; where a
+match is found. It can even be set up as part of a CI&#x2F;CD pipeline, and send a
+notification to enable us to realise and revoke a leaked secret in real-time.&lt;&#x2F;p&gt;
+&lt;p&gt;This links to a key design principle: Secrets should be revokable. We&#x27;re
+familiar with the concept of changing our passwords for online services and
+websites, and it&#x27;s a similar principle. Third-party APIs and services often
+employ an API key, so that we don&#x27;t have to write code which needs access to our
+personal password. For example, DockerHub allows us to create API keys which
+scripts can use to publish our containers, avoiding the need to provide our CI&#x2F;CD scripts with a password.&lt;&#x2F;p&gt;
+&lt;p&gt;API keys allow us to limit access to an application through the principle of
+least privilege. Instead of a password, which allows access to all functions of
+an application, an API key often provides the ability to give our applications only the permissions which they require: e.g. read-only access, or access to a
+limited set of resources. API keys can be easily revoked, removing the possibility for them to be used by
+a malicious actor, and limiting their permissions can limit or mitigate the
+damage that can be done if and when they do leak. However, before revoking an
+API key, it&#x27;s sensible to work out what features of your application rely on it
+and may fail when they no longer have permission to access the resource, as this
+can cause other problems. When an API key gives few permissions, it may be more
+reasonable to create a new key and deploy it to the production environment,
+before revoking the compromised secret. &lt;&#x2F;p&gt;
+&lt;p&gt;Tools such as the &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;rtyley&#x2F;bfg-repo-cleaner&quot;&gt;BFG repo cleaner&lt;&#x2F;a&gt;
+can be used to alter git repository history, for example to remove a
+secret-containing file that should never have been committed 
+in the first place. In general, this approach should be applied with caution:
+never assume that by removing the secret from the repository, it&#x27;s now gone.
+Once something has been published to the internet, for 
+however little time, it should be considered compromised. While you can remove
+the file from the repository in this way, any leaked API keys also need to be
+revoked.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;&#x2F;h2&gt;
+&lt;p&gt;We&#x27;ve taken some tentative steps above to introduce ideas around code secrets
+and how we manage them. Separating our secrets and our code is a key step in
+keeping ourselves safe and ensuring our code is secure. Environment variables
+are a classic way to do this and widely supported with the concept of &amp;quot;dotenv&amp;quot;
+files but aren&#x27;t perfect. We also touched on how its easy to accidentally
+include secrets in version control and within container images and suggest some
+tips for how to prevent this using ignore files. In future snippets we&#x27;ll dig
+into some more advanced approaches to managing secrets.&lt;&#x2F;p&gt;
+</content>
+    </entry>
+    <entry xml:lang="en">
+        <title>What I&#x27;ve been reading</title>
+        <published>2023-05-21T00:00:00+00:00</published>
+        <updated>2023-05-21T00:00:00+00:00</updated>
+        <author>
+          <name>Alex Coleman</name>
+        </author>
+        <link rel="alternate" href="https://sparrow0hawk.github.io/what-ive-been-reading/" type="text/html"/>
+        <id>https://sparrow0hawk.github.io/what-ive-been-reading/</id>
+        <content type="html">&lt;p&gt;This is a quick post to shout out about things I&#x27;ve been reading that I think
+are pretty interesting. Touching on writing Python like Rust, multiple
+interpreters with Python 3.12 and cool stuff with Django 4.2.&lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;&lt;h2 id=&quot;real-multithreading-is-coming-to-python-learn-how-you-can-use-it-now-martin-heinz&quot;&gt;&lt;a href=&quot;https:&#x2F;&#x2F;martinheinz.dev&#x2F;blog&#x2F;97&quot;&gt;Real Multithreading is Coming to Python - Learn How You Can Use It Now&lt;&#x2F;a&gt; - Martin Heinz&lt;&#x2F;h2&gt;
+&lt;p&gt;First up was this really interesting article from Martin
+Heinz on the coming &amp;quot;Per-interpreter GIL&amp;quot; (Global Interpreter lock) that is
+coming in Python 3.12. The GIL is a restriction within the Python language that
+prevents true multi-threading, it enforces that only one thread can be in
+control of the Python interpreter at a time. This often leads us to reach for
+&lt;a href=&quot;https:&#x2F;&#x2F;docs.python.org&#x2F;3&#x2F;library&#x2F;multiprocessing.html#module-multiprocessing&quot;&gt;&lt;code&gt;multiprocessing&lt;&#x2F;code&gt;&lt;&#x2F;a&gt;
+for running code across multiple processors. This model doesn&#x27;t spawn threads
+but rather creates new subprocesses that side-step the GIL and allow us to run
+code in parallel. This has a number of disadvantages compared to true
+multi-threading, the biggest one which I&#x27;ve seen in the wild is processes don&#x27;t
+share memory like threads so by creating multiple processes you essentially copy
+the data you need for each process. In a HPC context this can be a significant
+problem because often you want to crunch a big dataset across multiple cores but
+you have to use more memory than the actual size of your dataset because you
+have to make copies of the data when using &lt;code&gt;multiprocessing&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Update: On this point above about processes and memory use, this isn&#x27;t strictly
+true on Linux due to copy-on-write. So when we create multiple processes they
+don&#x27;t actually copy the memory for each process unless they actually try and
+change the value. Thanks John Hodrien for pointing this out&lt;img src=&quot;https:&#x2F;&#x2F;twitter.com&#x2F;johnhodrien&#x2F;status&#x2F;1662824749930627073&quot; alt=&quot;1&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;p&gt;What Martin digs into in his post is how the coming &amp;quot;Per-interpreter GIL&amp;quot; change
+in Python 3.12 can actually be used to do true multi-threading! He notes
+crucially that this change coming in Python 3.12 isn&#x27;t for end users and that a
+more user friendly version (if the &lt;a href=&quot;https:&#x2F;&#x2F;peps.python.org&#x2F;pep-0554&#x2F;&quot;&gt;PEP&lt;&#x2F;a&gt; is
+accepted) will arrive in 3.13. But this is still a really interesting
+development and worth poking if you&#x27;re interested in high performant Python code.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;writing-python-like-its-rust-jakub-beranek&quot;&gt;&lt;a href=&quot;https:&#x2F;&#x2F;kobzol.github.io&#x2F;rust&#x2F;python&#x2F;2023&#x2F;05&#x2F;20&#x2F;writing-python-like-its-rust.html&quot;&gt;Writing Python like its Rust&lt;&#x2F;a&gt; - Jakub Beránek&lt;&#x2F;h2&gt;
+&lt;p&gt;This post for me managed to capture something I&#x27;ve felt since starting to play
+with Rust and having to move back to other languages like R and Python. One of
+the best things about Rust is the way it forces you to think differently about
+how you&#x27;d write other code, and to strive for &amp;quot;correctness&amp;quot; even without the
+Rust compiler. I know I&#x27;ll be referring back to this post for a while!&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;writing-a-chat-application-in-django-4-2-using-async-streaminghttpresponse-server-sent-events-and-postgresql-listen-notify-vidir-valberg-gudmundsson&quot;&gt;&lt;a href=&quot;https:&#x2F;&#x2F;valberg.dk&#x2F;django-sse-postgresql-listen-notify.html&quot;&gt;Writing a chat application in Django 4.2 using async StreamingHttpResponse, Server-Sent Events and PostgreSQL LISTEN&#x2F;NOTIFY&lt;&#x2F;a&gt; - Víðir Valberg Guðmundsson&lt;&#x2F;h2&gt;
+&lt;p&gt;I&#x27;ve written some Django stuff in my time but nothing quite as clever as this.
+This post looks as some really cool features in Django 4.2 and how you can
+integrate these with the Server-side events (SSE) API to building real-time applications. 
+This is pushing the envelope in terms of things I thought were do-able with
+Django so it&#x27;s great to have this post that walks through these topics and does
+so with plenty of detail.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;memory-allocation-sam-rose&quot;&gt;&lt;a href=&quot;https:&#x2F;&#x2F;samwho.dev&#x2F;memory-allocation&#x2F;&quot;&gt;Memory allocation&lt;&#x2F;a&gt; - Sam Rose&lt;&#x2F;h2&gt;
+&lt;p&gt;This is a fun post looking at memory and memory allocation and how simple
+allocators work. As someone not from a computer science background I really love
+posts like this that help fill out my understanding of what is actually going on
+with things like memory. This post also comes with some great interactive
+widgets and cute little dog call outs, whats not to like! &lt;&#x2F;p&gt;
+</content>
+    </entry>
+    <entry xml:lang="en">
+        <title>Leaving RSE, don&#x27;t stop believing in RSE</title>
+        <published>2023-05-03T00:00:00+00:00</published>
+        <updated>2023-05-03T00:00:00+00:00</updated>
+        <author>
+          <name>Alex Coleman</name>
+        </author>
+        <link rel="alternate" href="https://sparrow0hawk.github.io/leaving-rse/" type="text/html"/>
+        <id>https://sparrow0hawk.github.io/leaving-rse/</id>
+        <content type="html">&lt;p&gt;This week marks my final week as an RSE at the University of Leeds. It has been
+a tremendous (just under) 4 years of work but now it&#x27;s time to move on.&lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;
+&lt;p&gt;I&#x27;m joining Active Travel England as lead developer as part of their data and
+digital team and hope to blog more about their work but this post I&#x27;m going to
+dedicate to Research Computing at the University of Leeds.&lt;&#x2F;p&gt;
+&lt;p&gt;I&#x27;ll indulge a little and say back in 2014 when I started a PhD at the faculty
+of biology, little did I know I&#x27;d be a research software engineer some 5 years
+later. I started with little computer science knowledge but over my PhD came to
+find R and Python as the right tools for automating analysis and visualisation.
+And once starting down this path I found coding (and software) more interesting
+and rewarding than my lab work, so moved over into data science and eventually
+software engineering.&lt;&#x2F;p&gt;
+&lt;p&gt;I felt lucky, frankly, to start as a research software engineer at Leeds in
+2019. I had no computer science background, 1 year as a data scientist and
+little in my portfolio on GitHub. But at Leeds we had a great team, a broad
+remit and a flexibility to try things and learn from our mistakes. So I was
+given the freedom to work with R and Python but also learn Linux at the command
+line, learn how to make your code tick on a HPC and on a GPU. I was challenged
+to teach what I knew and learn to teach what I didn&#x27;t and got better, all the
+more for it. I was given the space to grow, to learn about cloud technologies,
+to learn about software engineering, to learn about research software and I am
+better and grateful for it.&lt;&#x2F;p&gt;
+&lt;p&gt;I&#x27;m really proud of projects we supported and the hundreds of students we&#x27;ve
+taught over my time there. From providing HPC capacity to the COVID vaccine
+effort, improving data pipelines in the institute for transport studies to
+deploying research applications to the cloud, teaching R, Python and git and all
+of the unsung work helping researchers get more research done by advising them
+on using high performance computing better. Our team, whilst small, has kept
+research ticking along on our high performance computing platforms and helped
+drive innovative work through training. We&#x27;ve also worked to build a community
+through events such as our TechTalk series and through the first ever research
+computing conference. We&#x27;ve tried to punch above our weight and strive to enable
+research through central IT and I know the team will continue to do so. &lt;&#x2F;p&gt;
+&lt;p&gt;We also weathered a once in a generation pandemic. Ensuring our HPC service
+stayed live and available from off campus and adapted to how we&#x27;d deliver our
+training and support from a purely remote setting. I can&#x27;t say enough about how
+important this was, we went from seeing each other every day in person, to every
+day remotely. These are the people who puzzled through one of the most
+discombobulating periods of my life with me, together and for that I will be
+eternally grateful.&lt;&#x2F;p&gt;
+&lt;p&gt;Over my time I&#x27;ve seen how much of a difference research software engineering
+can make to world class research. I have also seen the challenges faced to
+better recognise and adopt research software engineering as a central provision
+at Universities and worked to advocate for RSE during my time at Leeds. I will
+continue to do this whole heartedly from the outside because I recognise the
+importance and impact of RSE in making research world class.&lt;&#x2F;p&gt;
+&lt;p&gt;For me, my time as an RSE is coming to an end. But my belief in the importance
+of RSE is only strengthened by my time working with and meeting other RSEs. I will
+always give my adherent support to the research software engineering movement
+(in all it forms) going forward and whilst I may not be in (for now) I will
+always be ready to speak up for RSE in the future.&lt;&#x2F;p&gt;
+&lt;p&gt;To RSEs everywhere, your contribution is worthy and makes our research better.
+To Research Computing at Leeds, thank you for everything (the good and the bad),
+keep true to yourselves and keep making a difference.&lt;&#x2F;p&gt;
+</content>
+    </entry>
+    <entry xml:lang="en">
+        <title>Building your PyInstaller App for multiple OSs with GitHub Actions</title>
+        <published>2023-03-28T00:00:00+00:00</published>
+        <updated>2023-03-28T00:00:00+00:00</updated>
+        <author>
+          <name>Alex Coleman</name>
+        </author>
+        <link rel="alternate" href="https://sparrow0hawk.github.io/cross-compile-w-gh-actions/" type="text/html"/>
+        <id>https://sparrow0hawk.github.io/cross-compile-w-gh-actions/</id>
+        <content type="html">&lt;p&gt;Previously, I’d written about building a &lt;a href=&quot;https:&#x2F;&#x2F;sparrow0hawk.github.io&#x2F;python-gui-pyinstaller&#x2F;&quot;&gt;graphical user interface (GUI) for a command line tool (CLI) with PySimpleGUI and packaging it up with PyInstaller&lt;&#x2F;a&gt;. One drawback I noted with this (and is &lt;a href=&quot;https:&#x2F;&#x2F;pyinstaller.org&#x2F;en&#x2F;stable&#x2F;usage.html#supporting-multiple-operating-systems&quot;&gt;noted by PyInstaller themselves&lt;&#x2F;a&gt;) is that you can’t cross compile. This is a pain when I want to be able to build the app for operating systems (OS) I don’t have access too or don’t really want to spin up a virtual machine just to build an executeable. &lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;
+&lt;p&gt;A natural solution to this feels like &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;features&#x2F;actions&quot;&gt;GitHub actions&lt;&#x2F;a&gt; which comes out of the box with runners for windows, macOS and Linux. GitHub actions are GitHubs offering for continuous integration and development and allow you to write simple yml based workflows that are executed on conditions (such as a new tag being pushed to the repo for a release). I love GitHub actions and regularly use and abuse them (see &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;ARCTraining&#x2F;hackpad-templator&quot;&gt;hackpad Templator&lt;&#x2F;a&gt;), mostly I like them for deploying things like this blog! Or for automated testing on my repositories. &lt;&#x2F;p&gt;
+&lt;p&gt;In this instance I want to setup an action that will build my executable on a new git tag, zip up all the bits from the build and deposit that in a GitHub release for the associated tag. Making it easier for me to grab a version of the app for different operating system if someone comes asking (not that I’m expecting hordes). &lt;&#x2F;p&gt;
+&lt;p&gt;I found some existing &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;marketplace&#x2F;actions&#x2F;pyinstaller-windows&quot;&gt;pre built actions for building with PyInstaller&lt;&#x2F;a&gt; which seemed a reasonable first cut but rather decided to go down the route of just writing a series of shell steps instead. This better replicated my experience locally and didn’t lock the action in to any dependencies (it also meant if it broke I owned it!). I started off with an action like this:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;yml&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-yml &quot;&gt;&lt;code class=&quot;language-yml&quot; data-lang=&quot;yml&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;build-exe
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# Only run this when the master branch changes
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;on&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;push&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;tags&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;      - &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;v*&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# This job installs dependencies, build the book, and pushes it to `gh-pages`
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;jobs&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;build-exe&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;runs-on&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;${{ matrix.os }}
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;strategy&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;matrix&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;os&lt;&#x2F;span&gt;&lt;span&gt;: [&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;ubuntu-latest&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;macos-latest&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;windows-latest&lt;&#x2F;span&gt;&lt;span&gt;]
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;steps&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;uses&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;actions&#x2F;checkout@v2
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;uses&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;actions&#x2F;setup-python@v4
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;with&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;python-version&lt;&#x2F;span&gt;&lt;span&gt;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;3.10&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Install redwrench
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;shell&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;bash -l {0}
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;run&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;|
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;          pip3 install .
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;install PyInstaller
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;shell&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;bash -l {0}
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;run&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;|
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;          pip3 install pyinstaller==5.9.0
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Build Pyinstaller .exe
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;shell&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;bash -l {0}
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;run&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;|
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;          pyinstaller -n redwrench --onefile --windowed app.py
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;uses&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;montudor&#x2F;action-zip@v1
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;with&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;args&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;zip -qq -r ${{ matrix.os }}-${{github.ref_name}}.zip dist
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;uses&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;softprops&#x2F;action-gh-release@v1
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;with&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;files&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;${{ matrix.os }}-${{github.ref_name}}.zip
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This does a couple of things:&lt;&#x2F;p&gt;
+&lt;ol&gt;
+&lt;li&gt;Sets up the job to run on a matrix of different operating systems &lt;&#x2F;li&gt;
+&lt;li&gt;Checks out my repository cause we need the code to build the thing!&lt;&#x2F;li&gt;
+&lt;li&gt;Installs the package redwrench because it’s a custom package and we want PyInstaller to package it up&lt;&#x2F;li&gt;
+&lt;li&gt;Installs PyInstaller &lt;&#x2F;li&gt;
+&lt;li&gt;Runs a PyInstaller line to create a single file, windowed app with the name redwrench &lt;&#x2F;li&gt;
+&lt;li&gt;Use an existing action to zip everything in the dist directory up (dist is where PyInstaller puts stuff by default)&lt;&#x2F;li&gt;
+&lt;li&gt;Use another action for uploading artefacts from action runs to releases &lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;p&gt;This didn’t work first time (do any actions ever?) because my zip action uses docker (rather than JavaScript) and so was limited to Linux only action runners. No problem I’ll go find a different zip action. So I switched this for this:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;yml&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-yml &quot;&gt;&lt;code class=&quot;language-yml&quot; data-lang=&quot;yml&quot;&gt;&lt;span&gt;- &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;uses&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;vimtor&#x2F;action-zip@v1
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;with&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;files&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;dist&#x2F;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;recursive&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;false
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;dest&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;${{ matrix.os }}-${{github.ref_name}}.zip
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;And woo! I’ve got an action that works and uploads my artefacts to a release. &lt;&#x2F;p&gt;
+&lt;p&gt;On further testing on Windows I found this didn’t quite work. My windows windowed app failed silently, something I’m investigating. So after some local testing (I found a windows device!) I find that using —windowed is giving some issues. Without this setting all seems well (although further investigation is required. However, this means I need to update my action because I now want to run a different PyInstaller step for windows. GitHub actions allow you to do this easily with if blocks so I change the follow sections to this:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;yml&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-yml &quot;&gt;&lt;code class=&quot;language-yml&quot; data-lang=&quot;yml&quot;&gt;&lt;span&gt;- &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Build Pyinstaller .exe (macOS and Linux)
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;if&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;matrix.os != &amp;#39;windows-latest&amp;#39;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;shell&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;bash -l {0}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;run&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;|
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;    pyinstaller -n redwrench --onefile --windowed app.py
+&lt;&#x2F;span&gt;&lt;span&gt;- &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Build Pyinstaller .exe (Windows)
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;if&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;matrix.os == &amp;#39;windows-latest&amp;#39;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;shell&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;bash -l {0}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;run&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;|
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;    pyinstaller -n redwrench --onefile app.py
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;And this gets me to a happy place.&lt;&#x2F;p&gt;
+&lt;p&gt;So overall I end up with an action like this:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;yml&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-yml &quot;&gt;&lt;code class=&quot;language-yml&quot; data-lang=&quot;yml&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;build-exe
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# Only run this when the master branch changes
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;on&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;push&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;tags&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;      - &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;v*&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# This job installs dependencies, build the book, and pushes it to `gh-pages`
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;jobs&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;  &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;build-exe&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;runs-on&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;${{ matrix.os }}
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;strategy&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;      &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;matrix&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;os&lt;&#x2F;span&gt;&lt;span&gt;: [&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;ubuntu-latest&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;macos-latest&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;windows-latest&lt;&#x2F;span&gt;&lt;span&gt;]
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;steps&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;uses&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;actions&#x2F;checkout@v2
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;uses&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;actions&#x2F;setup-python@v4
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;with&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;python-version&lt;&#x2F;span&gt;&lt;span&gt;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;3.10&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Install redwrench
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;shell&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;bash -l {0}
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;run&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;|
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;          pip3 install .
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;install PyInstaller
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;shell&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;bash -l {0}
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;run&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;|
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;          pip3 install pyinstaller==5.9.0
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Build Pyinstaller .exe (macOS and Linux)
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;if&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;matrix.os != &amp;#39;windows-latest&amp;#39;
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;shell&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;bash -l {0}
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;run&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;|
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;          pyinstaller -n redwrench --onefile --windowed app.py
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Build Pyinstaller .exe (Windows)
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;if&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;matrix.os == &amp;#39;windows-latest&amp;#39;
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;shell&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;bash -l {0}
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;run&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;|
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;          pyinstaller -n redwrench --onefile app.py
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;uses&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;vimtor&#x2F;action-zip@v1
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;with&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;files&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;dist&#x2F;
+&lt;&#x2F;span&gt;&lt;span&gt;          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;recursive&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;false
+&lt;&#x2F;span&gt;&lt;span&gt;          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;dest&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;${{ matrix.os }}-${{github.ref_name}}.zip
+&lt;&#x2F;span&gt;&lt;span&gt;      - &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;uses&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;softprops&#x2F;action-gh-release@v1
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;with&lt;&#x2F;span&gt;&lt;span&gt;:
+&lt;&#x2F;span&gt;&lt;span&gt;          &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;files&lt;&#x2F;span&gt;&lt;span&gt;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;${{ matrix.os }}-${{github.ref_name}}.zip
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This does feel like a lot of effort to cross compile but it’s nice, the PyInstaller docs are great and the whole experience is very impressive given the complexity of what is going on. &lt;&#x2F;p&gt;
+</content>
+    </entry>
+    <entry xml:lang="en">
+        <title>TWIL: PyInstaller and PySimpleGUI</title>
+        <published>2023-03-26T00:00:00+00:00</published>
+        <updated>2023-03-26T00:00:00+00:00</updated>
+        <author>
+          <name>Alex Coleman</name>
+        </author>
+        <link rel="alternate" href="https://sparrow0hawk.github.io/python-gui-pyinstaller/" type="text/html"/>
+        <id>https://sparrow0hawk.github.io/python-gui-pyinstaller/</id>
+        <content type="html">&lt;p&gt;Or rather last week I learned...&lt;&#x2F;p&gt;
+&lt;p&gt;Recently I’d been asked about a tool I wrote to automate some post processing I do to get files read for mail merges. This was a series of Python scripts I’d written up into a Click command line interface (CLI) package.&lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;
+&lt;p&gt;It’s a cute little pet project that I’d used to learn a bit about &lt;a href=&quot;https:&#x2F;&#x2F;click.palletsprojects.com&#x2F;en&#x2F;8.1.x&#x2F;&quot;&gt;Click&lt;&#x2F;a&gt;, &lt;a href=&quot;https:&#x2F;&#x2F;www.mkdocs.org&#x2F;&quot;&gt;mkdocs&lt;&#x2F;a&gt; and more modern python packaging ideas (&lt;a href=&quot;https:&#x2F;&#x2F;peps.python.org&#x2F;pep-0518&#x2F;&quot;&gt;pyproject.toml&lt;&#x2F;a&gt;). One of the many things where Python has made my life a little easier and as such I’ve mentioned it a few times to people who do the same processes. &lt;&#x2F;p&gt;
+&lt;p&gt;However, when it comes to sharing the tool with people who aren’t developers I realised I had a problem. Walking through with someone how to use a command line tool who’s only ever interacted with graphical applications has a whole series of hurdles (it’s a whole lot of new territory to cover for a beginner just to use my tool).  The solution here felt simple, plug the tool into a graphical user interface (GUI). That isn’t something I’d done in Python before but has a vague awareness of the options. With some time to hand and this new incentive to learn I thought I’d give it a shot!&lt;&#x2F;p&gt;
+&lt;p&gt;Now there’s plenty of choice when it comes to Python GUI frameworks (&lt;a href=&quot;https:&#x2F;&#x2F;docs.python.org&#x2F;3&#x2F;library&#x2F;tkinter.html&quot;&gt;tkinter&lt;&#x2F;a&gt; and &lt;a href=&quot;https:&#x2F;&#x2F;pypi.org&#x2F;project&#x2F;PyQt5&#x2F;&quot;&gt;PyQt&lt;&#x2F;a&gt; to name a few). I just needed something simple to get stuck in so I stumbled upon &lt;a href=&quot;https:&#x2F;&#x2F;www.pysimplegui.org&#x2F;en&#x2F;latest&#x2F;&quot;&gt;PySimpleGUI&lt;&#x2F;a&gt; which aims to transform existing GUI frameworks into a simple interface. Sounded like what I was after so here we go! &lt;&#x2F;p&gt;
+&lt;p&gt;PySimpleGUI looks at using basic Python structures like lists and dictionaries to organise the GUI interface and events model. This felt ideal, let’s build a simple app.py script that has some fields to capture the input to my CLl, and fire off the CLI with these arguments when clicking a “Run” button. The PySimeplgui website has plenty of existing examples which makes cobbling together my GUI from existing boilerplate nice and straightforward. &lt;&#x2F;p&gt;
+&lt;p&gt;Having the GUI interact with my existing Click CLI logic was the next challenge. Click operates through decorators that you add to commands and sub commands which mean you can’t just import the CLI logic. Conveniently, I read that you can however import a function decorated as a &lt;a href=&quot;https:&#x2F;&#x2F;click.palletsprojects.com&#x2F;en&#x2F;8.1.x&#x2F;api&#x2F;#click.Command&quot;&gt;&lt;code&gt;Click.Command&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; and use the &lt;a href=&quot;https:&#x2F;&#x2F;click.palletsprojects.com&#x2F;en&#x2F;8.1.x&#x2F;api&#x2F;#click.Command.callback&quot;&gt;&lt;code&gt;.callback&lt;&#x2F;code&gt;&lt;&#x2F;a&gt; function to use the defined Click command within a Python script with the same arguments as specified in the CLI. Perfect. So I can write a GUI that operates with the same logic as the CLI without any duplication! Excellent!&lt;&#x2F;p&gt;
+&lt;p&gt;Armed with a working GUI app that behaves the same as my CLI app I now needed to understand how to bundle this all up to provide a single executable for my user. Again this is territory I’m not used to, I’ve written code to run in the command line or for users with existing experience using scripts and code but bundling that all up into a single executable in Python, that’s a new one on me. Enter PyInstaller. PyInstaller is a project I’ve been aware of for some time (I’ve recommended it to some people at work before) but not actually needed to ever use, until now.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;pyinstaller.org&#x2F;en&#x2F;stable&#x2F;&quot;&gt;PyInstaller&lt;&#x2F;a&gt; will bundle up a Python script into a single folder (or single file) which captures the scripts dependencies (including a copy of the Python interpreter, but not system libraries) and bundles them all up. It isn’t (annoyingly) a cross compiler so sorting this out cross-OS isn’t straight forward. But as a starter for 10 this would do. Getting started with this is as simple as the command: &lt;code&gt;pyinstaller your_program.py&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;Initially I wasn’t sure how this would behave with my custom package but was pleasantly surprised to find it behaved just fine. I found this is because PyInstaller is aware of egg installed Python packages so as long as my CLI package is installed with &lt;code&gt;pip install .&lt;&#x2F;code&gt; It’s all fine.&lt;&#x2F;p&gt;
+</content>
+    </entry>
+    <entry xml:lang="en">
+        <title>Reflections from RustNation 2023</title>
+        <published>2023-02-17T00:00:00+00:00</published>
+        <updated>2023-02-17T00:00:00+00:00</updated>
+        <author>
+          <name>Alex Coleman</name>
+        </author>
+        <link rel="alternate" href="https://sparrow0hawk.github.io/rustnation2023/" type="text/html"/>
+        <id>https://sparrow0hawk.github.io/rustnation2023/</id>
+        <content type="html">&lt;p&gt;I&#x27;m on the train back to Leeds after a fantastic 2 days at &lt;a href=&quot;https:&#x2F;&#x2F;www.rustnationuk.com&#x2F;&quot;&gt;RustNation 2023&lt;&#x2F;a&gt; the first UK Rust language conference. &lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;
+&lt;p&gt;I was lucky enough to have my work support me in attending and get an early bird ticket which enabled me to take part in the full day workshop on Thursday as well as the conference on Friday.&lt;&#x2F;p&gt;
+&lt;p&gt;Here are some reflections on my time there...&lt;&#x2F;p&gt;
+&lt;p&gt;I&#x27;ve been interested in Rust for a couple of years now and whilst I&#x27;ve yet to see it used within research software (I&#x27;m sure research software written is Rust does exist I just haven&#x27;t seen it!), I&#x27;m super interested in where this language is going and how it could be applied to research software.
+Out of work I&#x27;ve also dabbled with Rust and as someone from a Python background I&#x27;ve found the learning curve steep (as advertised) but benefitted from the host of terrific resources available to learn (&lt;a href=&quot;..&#x2F;learn_rust.md&quot;&gt;See notes on this&lt;&#x2F;a&gt;).
+So RustNation seemed like the perfect opportunity to learn more and speak to others about how Rust is being used and taught.&lt;&#x2F;p&gt;
+&lt;p&gt;The conference was hosted at the Brewery in London and kicked off on 16th February Thursday with all day workshops separated into 3 tracks: beginner, intermediate and expert.
+I selected the &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;codurance&#x2F;rust-nation-intermediate-workshop&quot;&gt;intermediate workshop&lt;&#x2F;a&gt; (run by Jocelyn Facchini from Codurance) which looked to cover generics, traits, macros, threads and web assembly. 
+All topics I&#x27;ve read about but never quite got my head around.
+Suffice to say my head was thoroughly fried by the end of the day but it had been great to not only have someone clearly outline these topics and their applications in Rust programs, but also get stuck in with challenging but practical code examples.
+The section on macros in particular really helped solidify in my head how you create and use macros in Rust.
+The workshop also served as a really fun environment to speak to others using Rust, see how they wrote their code and work together to crack the code examples (Ibrahim and James, you were very helpful!). 
+It was also great to see how these more advanced topics were approached from a teaching perspective and it was particularly useful to chat with the instructor for the beginners session in one of the breaks about how they approached introducing people to Rust.
+The final section on web assembly looked specifically at the &lt;a href=&quot;https:&#x2F;&#x2F;yew.rs&#x2F;&quot;&gt;Yew framework&lt;&#x2F;a&gt;, this was really interesting as a way of developing component-based web applications using Rust that I hadn&#x27;t heard of before.&lt;&#x2F;p&gt;
+&lt;p&gt;Day 2 kicked off at 9am with the keynote from Nell Shamrell-Harrington talking about the cycle of learning, teaching, delivering in the Rust community.
+It touched on a lot of the things I think are great about Rust: the community&#x27;s openness to beginners, the  availability of resources like &lt;a href=&quot;https:&#x2F;&#x2F;doc.rust-lang.org&#x2F;book&#x2F;&quot;&gt;the book&lt;&#x2F;a&gt; and initiatives like &lt;a href=&quot;https:&#x2F;&#x2F;this-week-in-rust.org&#x2F;&quot;&gt;This Week in Rust&lt;&#x2F;a&gt; (which has been a great entrypoint for me to see how to use Rust).
+This all fed into what I&#x27;d call the Rust promise, which is the welcoming culture that encourages us not just to learn Rust for ourselves but to learn Rust to share what we&#x27;ve learned with others (something I can definitely get on board with!).
+My biggest problem at this stage of the conference was that there were actually too many interesting talks to pick from.
+Thankfully, the event was also &lt;a href=&quot;https:&#x2F;&#x2F;live.rustnationuk.com&#x2F;&quot;&gt;live streamed&lt;&#x2F;a&gt; so hopefully I can go back and check out the talks I missed.&lt;&#x2F;p&gt;
+&lt;p&gt;I went along to a TockOS demonstration which covered using the TockOS to program for embedded systems.
+This was very cool (they even had Raspberry Pi&#x27;s for you to have a go on!) although it was definitely a level up from my experience using MicroPython and running some little examples from the &lt;a href=&quot;https:&#x2F;&#x2F;docs.rust-embedded.org&#x2F;discovery&#x2F;microbit&#x2F;index.html&quot;&gt;Embedded Rust book&lt;&#x2F;a&gt; on my BBC Microbit.
+Tim McNamara (of the &lt;a href=&quot;https:&#x2F;&#x2F;www.youtube.com&#x2F;c&#x2F;timclicks&quot;&gt;TimClicks YouTube channel&lt;&#x2F;a&gt;&#x2F;&lt;a href=&quot;https:&#x2F;&#x2F;www.manning.com&#x2F;books&#x2F;rust-in-action&quot;&gt;Rust In Action&lt;&#x2F;a&gt; fame) did a super talk about encouraging adoption of Rust into a workplace and his reflections on teaching Rust within AWS.
+This talk was peppered with excellent insights into how you teach Rust and do so in a manner that brought people with you so that making the shift was sustainable.
+Before dashing off to find my storm-delayed train I watched Stephen Chin from JFrog talk about their open sourced tool &lt;a href=&quot;https:&#x2F;&#x2F;pyrsia.io&#x2F;&quot;&gt;Pyrsia&lt;&#x2F;a&gt; for tackling security issues with open source supply chains.
+This uses blockchain and signing tools to create more public information about packages uploaded to a distributed network of package repositories ensuring trust around the packages present.
+I haven&#x27;t totally got my head around how it works but it sounded like an interesting solution to the supply chain security problem (&lt;a href=&quot;https:&#x2F;&#x2F;software.ac.uk&#x2F;about&#x2F;fellows&#x2F;alex-coleman&quot;&gt;something else I&#x27;m interested in&lt;&#x2F;a&gt;).&lt;&#x2F;p&gt;
+&lt;p&gt;Overall, RustNation rocked! It was fantastic to meet other people writing Rust, hear about how people are using it in production and how people are teaching it to others! 
+An enormous congratulations to Ernest and the whole conference team for putting it on and making it such a success 🎉.
+It&#x27;s inspired me to think about developing some beginner materials and developing some slides to set out my stall at work about why I think Rust is great and why I think researchers should start looking at it.&lt;&#x2F;p&gt;
+&lt;p&gt;&lt;img src=&quot;https:&#x2F;&#x2F;sparrow0hawk.github.io&#x2F;rustnation2023&#x2F;rustnationbadge.jpeg&quot; alt=&quot;RustNation Badge on laptop&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+</content>
+    </entry>
+    <entry xml:lang="en">
+        <title>Things to do in 2023: A new reveal.js theme</title>
+        <published>2023-01-07T00:00:00+00:00</published>
+        <updated>2023-01-07T00:00:00+00:00</updated>
+        <author>
+          <name>Alex Coleman</name>
+        </author>
+        <link rel="alternate" href="https://sparrow0hawk.github.io/revealjs-theme/" type="text/html"/>
+        <id>https://sparrow0hawk.github.io/revealjs-theme/</id>
+        <content type="html">&lt;p&gt;A new year is upon us and so that leads to the inevitableness of thinking about things i&#x27;d like to get done this year.&lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;
+&lt;p&gt;One thing that has cropped up already is I could &lt;strong&gt;really&lt;&#x2F;strong&gt; do with personalising a theme for &lt;a href=&quot;https:&#x2F;&#x2F;revealjs.com&#x2F;&quot;&gt;reveal.js&lt;&#x2F;a&gt;. 
+Reveal.js is lovely, it&#x27;s a HTML presentation framework that is great and my default for making presentations these days.
+For me, I like the fact it&#x27;s just a website (something I can share via a URL), it&#x27;s responsive across devices, and supports Markdown for writing slides. 
+I particularly like how HackMD, my note making site of preference, also supports generating a reveal.js slidedeck straight from a hackpad.&lt;&#x2F;p&gt;
+&lt;iframe src=&quot;https:&#x2F;&#x2F;hackmd.io&#x2F;@sparrow0hawk&#x2F;it-xmas-talk&quot; title=&quot;IT Christmas Techtalk 2023 via revealjs and hackmd&quot; height=&quot;400&quot; width=&quot;600&quot;&gt;&lt;&#x2F;iframe&gt;
+&lt;p&gt;However it&#x27;s not perfect.
+It&#x27;s hard to position multiple elements in a single slide. 
+By default it doesn&#x27;t support multi-column slides and the basic themes are a little basic.&lt;&#x2F;p&gt;
+&lt;p&gt;So when I was asked to do a talk for January I thought to myself, why not take the opportunity to spice your reveal.js slides up a little bit.
+Why not have a think about making a &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;hakimel&#x2F;reveal.js&#x2F;blob&#x2F;master&#x2F;css&#x2F;theme&#x2F;README.md&quot;&gt;custom theme&lt;&#x2F;a&gt;! 
+I looked at talks like &lt;a href=&quot;https:&#x2F;&#x2F;trallard.github.io&#x2F;Talks&#x2F;2019-05-csvconf&quot;&gt;this from Tania Allard&lt;&#x2F;a&gt; and I think look at this cool way of doing reveal.js!
+It&#x27;ll also be good for me to polish up my CSS and HTML knowledge as they&#x27;re things I know but only so far as I can throw them (which isn&#x27;t very far).&lt;&#x2F;p&gt;
+&lt;p&gt;Turning back to prepare these slides for this January talk I know find myself in what I assume is not an unfamiliar conundrum. 
+Do I have enough time to sort out my new theme and write these slides in time for the talk?
+We shall see.&lt;&#x2F;p&gt;
+</content>
+    </entry>
+    <entry xml:lang="en">
+        <title>Teaching and mastery</title>
+        <published>2022-04-15T00:00:00+00:00</published>
+        <updated>2022-04-15T00:00:00+00:00</updated>
+        <author>
+          <name>Alex Coleman</name>
+        </author>
+        <link rel="alternate" href="https://sparrow0hawk.github.io/teaching-python/" type="text/html"/>
+        <id>https://sparrow0hawk.github.io/teaching-python/</id>
+        <content type="html">&lt;p&gt;The reference to mastery in this blog title is mostly ironic, as I would readily admit I am definitely not a master of Python and indeed very far from it!
+That said, I certainly aspire to this sort of intangible concept of mastery. &lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;
+&lt;p&gt;This idea comes from a place of seeing software development&#x2F;engineering as modern day craft, and the historical career progression of craftsmen in the European guild system from apprentice, to journeyman and finally to being a master&lt;sup class=&quot;footnote-reference&quot;&gt;&lt;a href=&quot;#1&quot;&gt;1&lt;&#x2F;a&gt;&lt;&#x2F;sup&gt;. &lt;&#x2F;p&gt;
+&lt;p&gt;As someone who didn&#x27;t start off their software engineering career through any formal training, I find this way of thinking about my skill progression both helpful and unhelpful.
+Having no qualifications that confirm I&#x27;ve been tested to a standard as a software engineer, I think of myself as a journeyman. Having broken through the apprentice phase of learning, I&#x27;m now confident writing Python and understand the basics.
+However, being a journeyman is a rather large grey area. I can definitely do stuff but I wouldn&#x27;t consider myself an expert, and I&#x27;m hungry to learn more and expand my Python skills. 
+That&#x27;s not to say being a master or expert is a static position where you&#x27;ve learned everything, but perhaps those labels are merely aspirational.
+Or indeed as a wiser colleague than me once remarked &lt;em&gt;&amp;quot;someday you&#x27;ll find that the next wisest person from you leaves and suddenly everyone is asking you for advice&amp;quot;&lt;&#x2F;em&gt;. &lt;&#x2F;p&gt;
+&lt;p&gt;So, on this rather unclear trajectory towards mastery comes what I would say are the tremendous benefits of sitting down and teaching a topic.
+Teaching is actually a rather large part of my role as a research software engineer, whether that be one-to-one advice to students, or larger more formal workshops we run.
+When I first took Python workshops I was quite apprehensive, as teaching felt like a real test of my own knowledge. 
+Thankfully, our courses are based on the great resources from &lt;a href=&quot;https:&#x2F;&#x2F;carpentries.org&#x2F;&quot;&gt;the Carpentries&lt;&#x2F;a&gt; and have been honed many times by very experienced educators.&lt;&#x2F;p&gt;
+&lt;p&gt;Now, I really enjoy teaching Python. 
+I find it a unique opportunity to have to unwind everything I know that I&#x27;ve learned through my weird and winding journey and share it with others.
+Sometimes I don&#x27;t know stuff, or find a concept hard to explain, and will have to go off and recover something I thought I knew.
+This only ever helps me learn (or relearn) crucial things I thought I knew.
+I like to think that act of teaching is actually helping make me a better Pythonista because every student comes with a different perspective forcing you to clarify your own understanding of concepts.&lt;&#x2F;p&gt;
+&lt;p&gt;So on your path to &#x2F;mastery&#x2F; take the opportunity to teach if you can, it&#x27;s scary but fun and will make you better! &lt;&#x2F;p&gt;
+&lt;div class=&quot;footnote-definition&quot; id=&quot;1&quot;&gt;&lt;sup class=&quot;footnote-definition-label&quot;&gt;1&lt;&#x2F;sup&gt;
+&lt;p&gt;https:&#x2F;&#x2F;en.wikipedia.org&#x2F;wiki&#x2F;Master_craftsman &lt;&#x2F;p&gt;
+&lt;&#x2F;div&gt;
+</content>
+    </entry>
+    <entry xml:lang="en">
+        <title>Adventures with Rust part 1</title>
+        <published>2022-03-29T00:00:00+00:00</published>
+        <updated>2022-03-29T00:00:00+00:00</updated>
+        <author>
+          <name>Alex Coleman</name>
+        </author>
+        <link rel="alternate" href="https://sparrow0hawk.github.io/adventures-with-rust-001/" type="text/html"/>
+        <id>https://sparrow0hawk.github.io/adventures-with-rust-001/</id>
+        <content type="html">&lt;p&gt;I&#x27;ve been interested in learning the &lt;a href=&quot;https:&#x2F;&#x2F;www.rust-lang.org&#x2F;&quot;&gt;Rust language&lt;&#x2F;a&gt; for quite a while. &lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;
+&lt;p&gt;It regularly gets voted &amp;quot;Most Loved programming language&amp;quot; in the annual StackOverFlow Developer Survey&lt;sup class=&quot;footnote-reference&quot;&gt;&lt;a href=&quot;#1&quot;&gt;1&lt;&#x2F;a&gt;&lt;&#x2F;sup&gt; and there&#x27;s an emerging interest within the scientific community&lt;sup class=&quot;footnote-reference&quot;&gt;&lt;a href=&quot;#2&quot;&gt;2&lt;&#x2F;a&gt;&lt;&#x2F;sup&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;So a combination of personal and professional curiosity has led me to starting to have a poke around with the language. 
+Rust prides itself on it&#x27;s speed and memory safety through the &lt;em&gt;borrow checker&lt;&#x2F;em&gt; that checks references at compile time, the first of which sounds very nice to me as a python programmer and the second sounds important but isn&#x27;t something I think about as a python programmer.&lt;&#x2F;p&gt;
+&lt;p&gt;Getting started learning Rust has felt quite straightforward with the excellent &lt;a href=&quot;https:&#x2F;&#x2F;doc.rust-lang.org&#x2F;book&#x2F;&quot;&gt;Rust book&lt;&#x2F;a&gt;, the &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;rust-lang&#x2F;rustlings&#x2F;&quot;&gt;Rustlings course&lt;&#x2F;a&gt; and of course &lt;a href=&quot;https:&#x2F;&#x2F;doc.rust-lang.org&#x2F;stable&#x2F;rust-by-example&#x2F;&quot;&gt;Rust by example&lt;&#x2F;a&gt;.
+These are great resources i&#x27;ve started chewing through slowly but as i&#x27;ve found with learning languages previously (and indeed my continuing journey as an R programmer and pythonista) you really learn a language when you start hacking about with your own projects. &lt;&#x2F;p&gt;
+&lt;p&gt;But for me Rust is a very different language from what i&#x27;m used to, so i&#x27;ve found it quite difficult to just start tacking together my own projects (especially when my reflex is to start everything in python). 
+This led me back around to some things I did in the early days of learning python such as writing a small program to extract &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Sparrow0hawk&#x2F;zip_unlock&quot;&gt;password protected .zip files&lt;&#x2F;a&gt;.&lt;&#x2F;p&gt;
+&lt;p&gt;This came about because I was once sent a password-protected zip file and a password, but sadly the provided password didn&#x27;t work! 
+I had a hunch this was because there was a single typo somewhere in the provided password so wrote a quick python project that looked to take a password suggestion and through standard brute force techniques create many permutations of the password and try them on the .zip.
+It was a small trivial little project that I can honestly say I&#x27;ve used just twice but it was a nice challenge to put me through my paces and apply some of the things i&#x27;d learnt about python at the time.&lt;&#x2F;p&gt;
+&lt;p&gt;So with the prospect of a reasonably long train journey ahead, last night I set about re-implementing this project in &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;Sparrow0hawk&#x2F;zip-cracker-rs&quot;&gt;Rust&lt;&#x2F;a&gt;. &lt;&#x2F;p&gt;
+&lt;div class=&quot;footnote-definition&quot; id=&quot;1&quot;&gt;&lt;sup class=&quot;footnote-definition-label&quot;&gt;1&lt;&#x2F;sup&gt;
+&lt;p&gt;https:&#x2F;&#x2F;insights.stackoverflow.com&#x2F;survey&#x2F;2021
+&lt;sup class=&quot;footnote-reference&quot;&gt;&lt;a href=&quot;#2&quot;&gt;2&lt;&#x2F;a&gt;&lt;&#x2F;sup&gt;: https:&#x2F;&#x2F;www.nature.com&#x2F;articles&#x2F;d41586-020-03382-2&lt;&#x2F;p&gt;
+&lt;&#x2F;div&gt;
+</content>
+    </entry>
+    <entry xml:lang="en">
+        <title>Hello world</title>
+        <published>2022-03-23T00:00:00+00:00</published>
+        <updated>2022-03-23T00:00:00+00:00</updated>
+        <author>
+          <name>Alex Coleman</name>
+        </author>
+        <link rel="alternate" href="https://sparrow0hawk.github.io/hello-world/" type="text/html"/>
+        <id>https://sparrow0hawk.github.io/hello-world/</id>
+        <content type="html">&lt;p&gt;This is my first post.&lt;&#x2F;p&gt;
+&lt;span id=&quot;continue-reading&quot;&gt;&lt;&#x2F;span&gt;&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span&gt;&amp;gt; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;print&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Hello world&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;)
+&lt;&#x2F;span&gt;&lt;span&gt;Hello world
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+</content>
+    </entry>
+</feed>

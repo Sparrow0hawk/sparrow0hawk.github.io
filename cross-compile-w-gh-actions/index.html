@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+      <!-- Enable responsiveness on mobile devices-->
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+      <title>Alex Coleman</title>
+      
+      
+        <meta name="test">
+        <link rel="apple-touch-icon" sizes="180x180" href="https://sparrow0hawk.github.io/apple-touch-icon.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="https://sparrow0hawk.github.io/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="https://sparrow0hawk.github.io/favicon-16x16.png">
+        <link rel="manifest" href="https://sparrow0hawk.github.io/site.webmanifest">
+      
+
+      
+        <link rel="alternate" type="application/atom+xml" title="RSS" href="https://sparrow0hawk.github.io/atom.xml">
+      
+
+      <!-- have a look here
+https://github.com/not-matthias/apollo/blob/649e3e8f21667efe4dc41e5d539745418b831e95/templates/partials/header.html
+-->
+
+
+<meta property="og:title" content="Building your PyInstaller App for multiple OSs with GitHub Actions">
+
+
+<meta property="og:type" content="article" />
+<meta property="og:description" content=" Alex&#x27;s Coleman&#x27;s personal site and blog">
+<!-- TODO <meta property="og:image" content="http://euro-travel-example.com/thumbnail.jpg"> -->
+<meta name="twitter:card" content="summary_large_image">
+
+
+
+      
+          <link rel="stylesheet" href="https://sparrow0hawk.github.io/site.css">
+      
+
+      
+      
+    </head>
+
+    <body class="hack dark main container">
+        
+    
+        
+                
+                    <header>
+                        <nav itemscope itemtype="http://schema.org/SiteNavigationElement">
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;sparrow0hawk.github.io">
+                                <span itemprop="name">Home</span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;sparrow0hawk.github.io&#x2F;about">
+                                <span itemprop="name">About</span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;github.com&#x2F;Sparrow0hawk&#x2F;">
+                                <span itemprop="name">GitHub</span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;twitter.com&#x2F;Alex_C0leman">
+                                <span itemprop="name">Twitter</span></a>
+                        
+                            <a itemprop="url"
+                               class=""
+                               href="https:&#x2F;&#x2F;sparrow0hawk.github.io&#x2F;learn_rust">
+                                <span itemprop="name">Learn Rust🦀</span></a>
+                        
+                        </nav>
+                    </header>
+                
+            
+    
+
+<article itemscope itemtype="http://schema.org/BlogPosting">
+    <header>
+        <h1 itemprop="headline">Building your PyInstaller App for multiple OSs with GitHub Actions</h1>
+        <span class="muted">
+    <svg style="margin-bottom:-3px" class="i-clock" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <circle cx="16" cy="16" r="14"/>
+        <path d="M16 8 L16 16 20 20"/>
+    </svg>
+    <span>5 minute read</span>
+    <svg style="margin-bottom: -3px" class="i-edit" viewBox="0 0 32 32"
+         width="16" height="16" fill="none" stroke="currentcolor"
+         stroke-linecap="round" stroke-linejoin="round" stroke-width="6.25%">
+        <path d="M30 7 L25 2 5 22 3 29 10 27 Z M21 6 L26 11 Z M5 22 L10 27 Z"/>
+    </svg>
+
+    Published: 2023-03-28
+</span>
+    </header>
+    <div itemprop="articleBody">
+      <p>Previously, I’d written about building a <a href="https://sparrow0hawk.github.io/python-gui-pyinstaller/">graphical user interface (GUI) for a command line tool (CLI) with PySimpleGUI and packaging it up with PyInstaller</a>. One drawback I noted with this (and is <a href="https://pyinstaller.org/en/stable/usage.html#supporting-multiple-operating-systems">noted by PyInstaller themselves</a>) is that you can’t cross compile. This is a pain when I want to be able to build the app for operating systems (OS) I don’t have access too or don’t really want to spin up a virtual machine just to build an executeable. </p>
+<span id="continue-reading"></span>
+<p>A natural solution to this feels like <a href="https://github.com/features/actions">GitHub actions</a> which comes out of the box with runners for windows, macOS and Linux. GitHub actions are GitHubs offering for continuous integration and development and allow you to write simple yml based workflows that are executed on conditions (such as a new tag being pushed to the repo for a release). I love GitHub actions and regularly use and abuse them (see <a href="https://github.com/ARCTraining/hackpad-templator">hackpad Templator</a>), mostly I like them for deploying things like this blog! Or for automated testing on my repositories. </p>
+<p>In this instance I want to setup an action that will build my executable on a new git tag, zip up all the bits from the build and deposit that in a GitHub release for the associated tag. Making it easier for me to grab a version of the app for different operating system if someone comes asking (not that I’m expecting hordes). </p>
+<p>I found some existing <a href="https://github.com/marketplace/actions/pyinstaller-windows">pre built actions for building with PyInstaller</a> which seemed a reasonable first cut but rather decided to go down the route of just writing a series of shell steps instead. This better replicated my experience locally and didn’t lock the action in to any dependencies (it also meant if it broke I owned it!). I started off with an action like this:</p>
+<pre data-lang="yml" style="background-color:#2b303b;color:#c0c5ce;" class="language-yml "><code class="language-yml" data-lang="yml"><span style="color:#bf616a;">name</span><span>: </span><span style="color:#a3be8c;">build-exe
+</span><span>
+</span><span style="color:#65737e;"># Only run this when the master branch changes
+</span><span style="color:#d08770;">on</span><span>:
+</span><span>  </span><span style="color:#bf616a;">push</span><span>:
+</span><span>    </span><span style="color:#bf616a;">tags</span><span>:
+</span><span>      - &quot;</span><span style="color:#a3be8c;">v*</span><span>&quot;
+</span><span>
+</span><span style="color:#65737e;"># This job installs dependencies, build the book, and pushes it to `gh-pages`
+</span><span style="color:#bf616a;">jobs</span><span>:
+</span><span>  </span><span style="color:#bf616a;">build-exe</span><span>:
+</span><span>    </span><span style="color:#bf616a;">runs-on</span><span>: </span><span style="color:#a3be8c;">${{ matrix.os }}
+</span><span>    </span><span style="color:#bf616a;">strategy</span><span>:
+</span><span>      </span><span style="color:#bf616a;">matrix</span><span>:
+</span><span>        </span><span style="color:#bf616a;">os</span><span>: [</span><span style="color:#a3be8c;">ubuntu-latest</span><span>, </span><span style="color:#a3be8c;">macos-latest</span><span>, </span><span style="color:#a3be8c;">windows-latest</span><span>]
+</span><span>    </span><span style="color:#bf616a;">steps</span><span>:
+</span><span>      - </span><span style="color:#bf616a;">uses</span><span>: </span><span style="color:#a3be8c;">actions/checkout@v2
+</span><span>      - </span><span style="color:#bf616a;">uses</span><span>: </span><span style="color:#a3be8c;">actions/setup-python@v4
+</span><span>        </span><span style="color:#bf616a;">with</span><span>:
+</span><span>          </span><span style="color:#bf616a;">python-version</span><span>: &quot;</span><span style="color:#a3be8c;">3.10</span><span>&quot;
+</span><span>      - </span><span style="color:#bf616a;">name</span><span>: </span><span style="color:#a3be8c;">Install redwrench
+</span><span>        </span><span style="color:#bf616a;">shell</span><span>: </span><span style="color:#a3be8c;">bash -l {0}
+</span><span>        </span><span style="color:#bf616a;">run</span><span>: </span><span style="color:#b48ead;">|
+</span><span style="color:#a3be8c;">          pip3 install .
+</span><span>      - </span><span style="color:#bf616a;">name</span><span>: </span><span style="color:#a3be8c;">install PyInstaller
+</span><span>        </span><span style="color:#bf616a;">shell</span><span>: </span><span style="color:#a3be8c;">bash -l {0}
+</span><span>        </span><span style="color:#bf616a;">run</span><span>: </span><span style="color:#b48ead;">|
+</span><span style="color:#a3be8c;">          pip3 install pyinstaller==5.9.0
+</span><span>      - </span><span style="color:#bf616a;">name</span><span>: </span><span style="color:#a3be8c;">Build Pyinstaller .exe
+</span><span>        </span><span style="color:#bf616a;">shell</span><span>: </span><span style="color:#a3be8c;">bash -l {0}
+</span><span>        </span><span style="color:#bf616a;">run</span><span>: </span><span style="color:#b48ead;">|
+</span><span style="color:#a3be8c;">          pyinstaller -n redwrench --onefile --windowed app.py
+</span><span>      - </span><span style="color:#bf616a;">uses</span><span>: </span><span style="color:#a3be8c;">montudor/action-zip@v1
+</span><span>        </span><span style="color:#bf616a;">with</span><span>:
+</span><span>          </span><span style="color:#bf616a;">args</span><span>: </span><span style="color:#a3be8c;">zip -qq -r ${{ matrix.os }}-${{github.ref_name}}.zip dist
+</span><span>      - </span><span style="color:#bf616a;">uses</span><span>: </span><span style="color:#a3be8c;">softprops/action-gh-release@v1
+</span><span>        </span><span style="color:#bf616a;">with</span><span>:
+</span><span>          </span><span style="color:#bf616a;">files</span><span>: </span><span style="color:#a3be8c;">${{ matrix.os }}-${{github.ref_name}}.zip
+</span></code></pre>
+<p>This does a couple of things:</p>
+<ol>
+<li>Sets up the job to run on a matrix of different operating systems </li>
+<li>Checks out my repository cause we need the code to build the thing!</li>
+<li>Installs the package redwrench because it’s a custom package and we want PyInstaller to package it up</li>
+<li>Installs PyInstaller </li>
+<li>Runs a PyInstaller line to create a single file, windowed app with the name redwrench </li>
+<li>Use an existing action to zip everything in the dist directory up (dist is where PyInstaller puts stuff by default)</li>
+<li>Use another action for uploading artefacts from action runs to releases </li>
+</ol>
+<p>This didn’t work first time (do any actions ever?) because my zip action uses docker (rather than JavaScript) and so was limited to Linux only action runners. No problem I’ll go find a different zip action. So I switched this for this:</p>
+<pre data-lang="yml" style="background-color:#2b303b;color:#c0c5ce;" class="language-yml "><code class="language-yml" data-lang="yml"><span>- </span><span style="color:#bf616a;">uses</span><span>: </span><span style="color:#a3be8c;">vimtor/action-zip@v1
+</span><span style="color:#bf616a;">with</span><span>:
+</span><span>    </span><span style="color:#bf616a;">files</span><span>: </span><span style="color:#a3be8c;">dist/
+</span><span>    </span><span style="color:#bf616a;">recursive</span><span>: </span><span style="color:#d08770;">false
+</span><span>    </span><span style="color:#bf616a;">dest</span><span>: </span><span style="color:#a3be8c;">${{ matrix.os }}-${{github.ref_name}}.zip
+</span></code></pre>
+<p>And woo! I’ve got an action that works and uploads my artefacts to a release. </p>
+<p>On further testing on Windows I found this didn’t quite work. My windows windowed app failed silently, something I’m investigating. So after some local testing (I found a windows device!) I find that using —windowed is giving some issues. Without this setting all seems well (although further investigation is required. However, this means I need to update my action because I now want to run a different PyInstaller step for windows. GitHub actions allow you to do this easily with if blocks so I change the follow sections to this:</p>
+<pre data-lang="yml" style="background-color:#2b303b;color:#c0c5ce;" class="language-yml "><code class="language-yml" data-lang="yml"><span>- </span><span style="color:#bf616a;">name</span><span>: </span><span style="color:#a3be8c;">Build Pyinstaller .exe (macOS and Linux)
+</span><span style="color:#bf616a;">if</span><span>: </span><span style="color:#a3be8c;">matrix.os != &#39;windows-latest&#39;
+</span><span style="color:#bf616a;">shell</span><span>: </span><span style="color:#a3be8c;">bash -l {0}
+</span><span style="color:#bf616a;">run</span><span>: </span><span style="color:#b48ead;">|
+</span><span style="color:#a3be8c;">    pyinstaller -n redwrench --onefile --windowed app.py
+</span><span>- </span><span style="color:#bf616a;">name</span><span>: </span><span style="color:#a3be8c;">Build Pyinstaller .exe (Windows)
+</span><span style="color:#bf616a;">if</span><span>: </span><span style="color:#a3be8c;">matrix.os == &#39;windows-latest&#39;
+</span><span style="color:#bf616a;">shell</span><span>: </span><span style="color:#a3be8c;">bash -l {0}
+</span><span style="color:#bf616a;">run</span><span>: </span><span style="color:#b48ead;">|
+</span><span style="color:#a3be8c;">    pyinstaller -n redwrench --onefile app.py
+</span></code></pre>
+<p>And this gets me to a happy place.</p>
+<p>So overall I end up with an action like this:</p>
+<pre data-lang="yml" style="background-color:#2b303b;color:#c0c5ce;" class="language-yml "><code class="language-yml" data-lang="yml"><span style="color:#bf616a;">name</span><span>: </span><span style="color:#a3be8c;">build-exe
+</span><span>
+</span><span style="color:#65737e;"># Only run this when the master branch changes
+</span><span style="color:#d08770;">on</span><span>:
+</span><span>  </span><span style="color:#bf616a;">push</span><span>:
+</span><span>    </span><span style="color:#bf616a;">tags</span><span>:
+</span><span>      - &quot;</span><span style="color:#a3be8c;">v*</span><span>&quot;
+</span><span>
+</span><span style="color:#65737e;"># This job installs dependencies, build the book, and pushes it to `gh-pages`
+</span><span style="color:#bf616a;">jobs</span><span>:
+</span><span>  </span><span style="color:#bf616a;">build-exe</span><span>:
+</span><span>    </span><span style="color:#bf616a;">runs-on</span><span>: </span><span style="color:#a3be8c;">${{ matrix.os }}
+</span><span>    </span><span style="color:#bf616a;">strategy</span><span>:
+</span><span>      </span><span style="color:#bf616a;">matrix</span><span>:
+</span><span>        </span><span style="color:#bf616a;">os</span><span>: [</span><span style="color:#a3be8c;">ubuntu-latest</span><span>, </span><span style="color:#a3be8c;">macos-latest</span><span>, </span><span style="color:#a3be8c;">windows-latest</span><span>]
+</span><span>    </span><span style="color:#bf616a;">steps</span><span>:
+</span><span>      - </span><span style="color:#bf616a;">uses</span><span>: </span><span style="color:#a3be8c;">actions/checkout@v2
+</span><span>      - </span><span style="color:#bf616a;">uses</span><span>: </span><span style="color:#a3be8c;">actions/setup-python@v4
+</span><span>        </span><span style="color:#bf616a;">with</span><span>:
+</span><span>          </span><span style="color:#bf616a;">python-version</span><span>: &quot;</span><span style="color:#a3be8c;">3.10</span><span>&quot;
+</span><span>      - </span><span style="color:#bf616a;">name</span><span>: </span><span style="color:#a3be8c;">Install redwrench
+</span><span>        </span><span style="color:#bf616a;">shell</span><span>: </span><span style="color:#a3be8c;">bash -l {0}
+</span><span>        </span><span style="color:#bf616a;">run</span><span>: </span><span style="color:#b48ead;">|
+</span><span style="color:#a3be8c;">          pip3 install .
+</span><span>      - </span><span style="color:#bf616a;">name</span><span>: </span><span style="color:#a3be8c;">install PyInstaller
+</span><span>        </span><span style="color:#bf616a;">shell</span><span>: </span><span style="color:#a3be8c;">bash -l {0}
+</span><span>        </span><span style="color:#bf616a;">run</span><span>: </span><span style="color:#b48ead;">|
+</span><span style="color:#a3be8c;">          pip3 install pyinstaller==5.9.0
+</span><span>      - </span><span style="color:#bf616a;">name</span><span>: </span><span style="color:#a3be8c;">Build Pyinstaller .exe (macOS and Linux)
+</span><span>        </span><span style="color:#bf616a;">if</span><span>: </span><span style="color:#a3be8c;">matrix.os != &#39;windows-latest&#39;
+</span><span>        </span><span style="color:#bf616a;">shell</span><span>: </span><span style="color:#a3be8c;">bash -l {0}
+</span><span>        </span><span style="color:#bf616a;">run</span><span>: </span><span style="color:#b48ead;">|
+</span><span style="color:#a3be8c;">          pyinstaller -n redwrench --onefile --windowed app.py
+</span><span>      - </span><span style="color:#bf616a;">name</span><span>: </span><span style="color:#a3be8c;">Build Pyinstaller .exe (Windows)
+</span><span>        </span><span style="color:#bf616a;">if</span><span>: </span><span style="color:#a3be8c;">matrix.os == &#39;windows-latest&#39;
+</span><span>        </span><span style="color:#bf616a;">shell</span><span>: </span><span style="color:#a3be8c;">bash -l {0}
+</span><span>        </span><span style="color:#bf616a;">run</span><span>: </span><span style="color:#b48ead;">|
+</span><span style="color:#a3be8c;">          pyinstaller -n redwrench --onefile app.py
+</span><span>      - </span><span style="color:#bf616a;">uses</span><span>: </span><span style="color:#a3be8c;">vimtor/action-zip@v1
+</span><span>        </span><span style="color:#bf616a;">with</span><span>:
+</span><span>          </span><span style="color:#bf616a;">files</span><span>: </span><span style="color:#a3be8c;">dist/
+</span><span>          </span><span style="color:#bf616a;">recursive</span><span>: </span><span style="color:#d08770;">false
+</span><span>          </span><span style="color:#bf616a;">dest</span><span>: </span><span style="color:#a3be8c;">${{ matrix.os }}-${{github.ref_name}}.zip
+</span><span>      - </span><span style="color:#bf616a;">uses</span><span>: </span><span style="color:#a3be8c;">softprops/action-gh-release@v1
+</span><span>        </span><span style="color:#bf616a;">with</span><span>:
+</span><span>          </span><span style="color:#bf616a;">files</span><span>: </span><span style="color:#a3be8c;">${{ matrix.os }}-${{github.ref_name}}.zip
+</span></code></pre>
+<p>This does feel like a lot of effort to cross compile but it’s nice, the PyInstaller docs are great and the whole experience is very impressive given the complexity of what is going on. </p>
+
+    </div>
+
+    
+        <footer>
+            <hr>
+            <p>
+                
+                
+                
+            </p>
+            
+            
+        </footer>
+    
+</article>
+<script src="https://utteranc.es/client.js"
+        repo="sparrow0hawk/sparrow0hawk.github.io"
+        issue-term="pathname"
+        theme="github-dark"
+        crossorigin="anonymous"
+        async>
+</script>
+
+
+    </body>
+
+</html>
