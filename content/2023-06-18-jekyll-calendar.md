@@ -227,4 +227,10 @@ site](https://sparrow0hawk.github.io/rse-calendar/add-event/). If you're an RSE
 on the look out for events check out how to subscribe your calendar client to
 the [ICalendar files](https://sparrow0hawk.github.io/rse-calendar/subscribe/).
 I'll continue to be tinkering with this for a while so if you've got suggestions
-for making it better do [get in touch](https://github.com/Sparrow0hawk/rse-calendar/issues/new)!
+for making it better do [get in
+touch](https://github.com/Sparrow0hawk/rse-calendar/issues/new)!
+
+And if you've got this far and care about the software that drives research
+across the world and in the UK, this is your regular reminder to support the
+Society of Research Software Engineering by [becoming a member
+now](https://society-rse.org/join-us/) (you don't have to be an RSE)!
