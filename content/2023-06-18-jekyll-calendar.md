@@ -127,5 +127,104 @@ to true.
 > the calendar when it has finished (see
 > [#67](https://github.com/Sparrow0hawk/rse-calendar/pull/67)).
 
+At this point I'd roughly got myself to where I wanted to be. We had our central
+YAML file containing events that we could build a ICalendar file from but we
+could also, using GitHub actions + Python + Jinja, create markdown posts to
+populate our paginated site home page. We've got an, albeit quite simple,
+calendar site that users could browse or subscribe their calendar clients too. 
+
+I configured the GitHub actions to run every day so if there are no pull
+requests merged it refreshes the calendar each day, and added some pages
+detailing how to add events and a little about page. All I needed were some
+contributors! 
 
 ## Codeless contributions
+
+I posted in [RSE slack](https://society-rse.org/join-us/) about my project and
+had some interest and my first contributor (<3)! Through this process though
+they suggested I should have a think about other ways people could contribute an
+event, as quite fairly the barrier to entry was quite high (fork repo, edit
+locally create a PR). For someone not familiar with git or GitHub this is a real
+challenge to getting your event on this site. 
+
+GitHub Pages only hosts static content so you can't use HTTP POST requests to do
+any nice form based submissions (to my knowledge). So I needed another way to
+enable codeless contributions. My hunch here was that we could probably wire up
+a GitHub action to trigger on an issue with a certain label being added. I could
+draft a template issue with this label that included some content that mapped to the YAML fields
+and pull that out of the issue and append it to my main YAML file and create a
+pull request.
+
+Conveniently there already exists an action that will [retrieve YAML or JSON from
+code blocks within GitHub
+Issues](https://github.com/peter-murray/issue-body-parser-action). This was
+ideal, I could draft a template issue with a YAML block that matches the format
+of an event in my site YAML file and this action would extract that content. The
+more complicated part turned out to be getting this data and appending it to my
+existing YAML file.
+
+The
+[issue-body-parser-action](https://github.com/peter-murray/issue-body-parser-action)
+I used returned the content of the code block as JSON so I now needed a process
+that converted that JSON back into YAML and appended it, at the correct level to
+my existing YAML file. For this I turned to Javascript, a language I'm less
+familiar with than Python but one that has a rather nice library for
+manipulating [YAML](https://eemeli.org/yaml/#yaml) with. After a bit of back and
+forth with ChatGPT I settled on a rather [rough and ready
+script](https://github.com/Sparrow0hawk/rse-calendar/blob/main/_scripts/issue_to_event/index.js)
+that did the job, although with no validation. The key thing that really helped
+here and why I picked JS was the support in the
+[`yaml`](https://eemeli.org/yaml/#yaml) package for YAML features not directly
+supported by JS types ([Document API](https://eemeli.org/yaml/#documents)). This
+meant I could preserve comments in my original data file that I wanted there for
+anyone contributing via a pull request.
+
+Putting this altogether I could now:
+
+- Have a template issue with a YAML code block that matched the right keys for
+  adding an event
+- Use an existing action to retrieve this YAML block from an issue raised with
+  an `add-event` label
+- Using the JSON from the above action convert it to YAML and append it to my
+  existing calendar data file
+
+The final step was to have the action contribute this amended calendar YAML file
+back to the `main` branch as a PR, and preferably include the issue creator as
+the contributor.
+
+Again, there already was a GitHub action for that! The fantastic
+[create-pull-request](https://github.com/peter-evans/create-pull-request) action
+makes it easy to handle committing any changes, making a branch and opening a
+pull request with these changes. I can configure the details of who the committer
+is so that it uses information about the user who opened the issue, as well as
+pull request title and more! This was perfect for what I wanted and completed my
+[codeless contributing
+action](https://github.com/Sparrow0hawk/rse-calendar/blob/main/.github/workflows/issue_to_pull.yml)
+nicely.
+
+## Did you really have to do all that?
+
+I'm reasonably pleased with the [end
+result](https://sparrow0hawk.github.io/rse-calendar/) it does what it's billed,
+and whilst I'm sure there's probably a better way to do this that doesn't
+involve slightly abusing Jekyll's blog logic I worked with what I had.
+
+The codeless contributing bit I find particularly nice as a concept (it's
+execution is certainly not perfect and still needs tweaking as seen from peoples
+attempts to use it!). The fact you can trigger a whole process that suggests an
+automated pull request just from an issue feels like a really nice way to
+encourage contributions.
+
+The model I've adopted here for creating a calendar is absolutely transferrable
+to other communities who want to centralise their events. All you need to do is
+configure the YAML file and update some of the site configuration in
+`_config.yml`. So if you have a need to an events calendar and have an audience
+that is technically please feel free to check out this tool.
+
+For now, if you're an RSE with an event you want to share please feel free to
+[contribute it to the
+site](https://sparrow0hawk.github.io/rse-calendar/add-event/). If you're an RSE
+on the look out for events check out how to subscribe your calendar client to
+the [ICalendar files](https://sparrow0hawk.github.io/rse-calendar/subscribe/).
+I'll continue to be tinkering with this for a while so if you've got suggestions
+for making it better do [get in touch](https://github.com/Sparrow0hawk/rse-calendar/issues/new)!
