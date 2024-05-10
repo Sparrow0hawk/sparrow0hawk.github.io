@@ -27,7 +27,7 @@ def main() -> None:
             post_content = markdown_post.read()
 
         with open(f"site/posts/{post.title}.html", "w") as post_file:
-            converted_post = markdown.markdown(post_content)
+            converted_post = markdown.markdown(post_content, extensions=["fenced_code"])
             post_file.write(
                 template.render({"title": post.title, "content": converted_post})
             )
