@@ -28,7 +28,7 @@ jobs:
           python-version: '3.12'
 
       - name: Create virtual environment
-        run: python3 -m venv . --upgrade-deps .venv
+        run: python3 -m venv --upgrade-deps .venv
 
       - name: Install dependencies
         run: .venv/bin/pip install -r requirements.txt
