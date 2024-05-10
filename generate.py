@@ -1,6 +1,5 @@
 from __future__ import annotations
 import os
-import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -17,9 +16,7 @@ def main() -> None:
     posts = [Post(title=name.stem, path=name.resolve()) for name in post_files]
 
     env = Environment(
-        loader=FileSystemLoader("templates"),
-        trim_blocks=True,
-        lstrip_blocks=True
+        loader=FileSystemLoader("templates"), trim_blocks=True, lstrip_blocks=True
     )
 
     generate_index(env, posts)
@@ -29,9 +26,11 @@ def main() -> None:
         with open(post.path) as markdown_post:
             post_content = markdown_post.read()
 
-        with open(f"site/posts/{post.title}.html","w") as post_file:
+        with open(f"site/posts/{post.title}.html", "w") as post_file:
             converted_post = markdown.markdown(post_content)
-            post_file.write(template.render({"title": post.title, "content": converted_post}))
+            post_file.write(
+                template.render({"title": post.title, "content": converted_post})
+            )
 
 
 def generate_index(env: Environment, posts: list[Post]) -> None:
@@ -44,7 +43,6 @@ def generate_index(env: Environment, posts: list[Post]) -> None:
 class Post:
     title: str
     path: Path
-
 
 
 if __name__ == "__main__":
