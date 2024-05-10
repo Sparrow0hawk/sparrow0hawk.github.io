@@ -1,0 +1,15 @@
+{
+  "name": "sparrow0hawk.github.io",
+  "version": "1.0.0",
+  "description": "This repository is for my personal site.",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm run copy-simplecss",
+    "copy-simplecss": "cp node_modules/simpledotcss/simple.min.css site/static/simple.min.css"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "simpledotcss": "^2.3.0"
+  }
+}

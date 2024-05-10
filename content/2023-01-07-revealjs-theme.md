@@ -1,12 +1,6 @@
----
-layout: post
-title: "Things to do in 2023: A new reveal.js theme"
-tags: presenting, web, revealjs
----
+# Things to do in 2023: A new reveal.js theme"
 
 A new year is upon us and so that leads to the inevitableness of thinking about things i'd like to get done this year.
-
-<!-- more -->
 
 One thing that has cropped up already is I could **really** do with personalising a theme for [reveal.js](https://revealjs.com/). 
 Reveal.js is lovely, it's a HTML presentation framework that is great and my default for making presentations these days.

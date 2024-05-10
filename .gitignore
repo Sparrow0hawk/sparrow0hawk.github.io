@@ -1,4 +1,12 @@
-# gitignore file for things to ignore!
+# IDE
+.idea/
 
-test.html
-!templates/.gitkeep
+# python
+__pycache__
+.venv
+
+# site
+site
+
+# node
+node_modules

@@ -1,6 +1,4 @@
-+++
-title = "TWIL: PyInstaller and PySimpleGUI"
-+++
+# TWIL: PyInstaller and PySimpleGUI
 
 Or rather last week I learned...
 

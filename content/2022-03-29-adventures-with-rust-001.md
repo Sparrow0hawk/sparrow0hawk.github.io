@@ -1,10 +1,6 @@
----
-title: "Adventures with Rust part 1"
----
+# Adventures with Rust part 1
 
 I've been interested in learning the [Rust language](https://www.rust-lang.org/) for quite a while. 
-
-<!-- more -->
 
 It regularly gets voted "Most Loved programming language" in the annual StackOverFlow Developer Survey[^1] and there's an emerging interest within the scientific community[^2].
 

@@ -1,8 +1,4 @@
-+++
-title = "Research Security Snippets #2 Secret stuff"
-[extra]
-author = "Alex Coleman, Samantha Finnigan"
-+++
+# Research Security Snippets #2 Secret stuff
 
 > A big thank you to Samantha Finnigan, RSE from Durham for helping co-author this post
 and advice on content

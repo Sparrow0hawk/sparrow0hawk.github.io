@@ -1,6 +1,4 @@
-+++
-title = "Making a calendar website with Jekyll and GitHub pages"
-+++
+# Making a calendar website with Jekyll and GitHub pages
 
 Recently, I've been working on a Jekyll-based GitHub Pages site that presents a
 paginated list of upcoming events. It also builds on the [CodeRefinery
@@ -8,8 +6,6 @@ git-calendar](https://github.com/coderefinery/git-calendar) tool to generate
 and host ICalendar files to enable people to subscribe calendar apps to it. It's
 been an interesting look at inverting some of Jekyll's normal logic for blog
 posts and using GitHub Actions to build markdown posts from YAML.
-
-<!-- more -->
 
 ## But why?
 

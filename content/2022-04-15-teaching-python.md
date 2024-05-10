@@ -1,13 +1,7 @@
----
-layout: post
-title: Teaching and mastery
-tags: teaching, python
----
+# Teaching and mastery
 
 The reference to mastery in this blog title is mostly ironic, as I would readily admit I am definitely not a master of Python and indeed very far from it!
 That said, I certainly aspire to this sort of intangible concept of mastery. 
-
-<!-- more -->
 
 This idea comes from a place of seeing software development/engineering as modern day craft, and the historical career progression of craftsmen in the European guild system from apprentice, to journeyman and finally to being a master[^1]. 
 
