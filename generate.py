@@ -22,15 +22,18 @@ def main() -> None:
     generate_index(env, posts)
     os.makedirs("site/posts", exist_ok=True)
     for post in posts:
-        template = env.get_template("post.html")
-        with open(post.path) as markdown_post:
-            post_content = markdown_post.read()
+        generate_post(env, post)
 
-        with open(f"site/posts/{post.title}.html", "w") as post_file:
-            converted_post = markdown.markdown(post_content, extensions=["fenced_code"])
-            post_file.write(
-                template.render({"title": post.title, "content": converted_post})
-            )
+
+def generate_post(env: Environment, post: Post) -> None:
+    template = env.get_template("post.html")
+    with open(post.path) as markdown_post:
+        post_content = markdown_post.read()
+    with open(f"site/posts/{post.title}.html", "w") as post_file:
+        converted_post = markdown.markdown(post_content, extensions=["fenced_code"])
+        post_file.write(
+            template.render({"title": post.title, "content": converted_post})
+        )
 
 
 def generate_index(env: Environment, posts: list[Post]) -> None:
