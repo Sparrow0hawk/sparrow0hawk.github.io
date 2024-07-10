@@ -7,4 +7,5 @@ A summary of interesting things I've read in the past month, mostly listed for m
 - [A new axis?](https://samf.substack.com/p/a-new-axis)
 - [Fuzzy Red Lines in Ukraine](https://samf.substack.com/p/fuzzy-red-lines-in-ukraine)
 - [Microsoft Chose Profit Over Security and Left U.S. Government Vulnerable to Russian Hack, Whistleblower Says](https://www.propublica.org/article/microsoft-solarwinds-golden-saml-data-breach-russian-hackers)
+- [Serving a billion web requests with boring code](https://notes.billmill.org/blog/2024/06/Serving_a_billion_web_requests_with_boring_code.html)
 - [A Eulogy for DevOps](https://matduggan.com/a-eulogy-for-devops/)
