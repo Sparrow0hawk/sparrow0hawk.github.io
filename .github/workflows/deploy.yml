@@ -31,10 +31,16 @@ jobs:
         run: python3 -m venv --upgrade-deps .venv
 
       - name: Install dependencies
-        run: .venv/bin/pip install -r requirements.txt
+        run: .venv/bin/pip install .
 
       - name: Install node dependencies
         run: npm install
+
+      - name: Check types
+        run: make lint
+
+      - name: Test
+        run: make test
 
       - name: Clean
         run: make clean

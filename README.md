@@ -15,11 +15,11 @@ To build the site you will need:
    ```bash
    source .venv/bin/activate
    
-   pip install -r requirements.txt
+   pip install .
    ```
 3. Run generate script
    ```bash
-   python generate.py
+   python -m blog content .
    ```
 4. Serve site
    ```bash
