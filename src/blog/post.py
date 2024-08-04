@@ -11,7 +11,6 @@ import markdown
 class Post:
     filename: str
     title: str
-    path: Path
     content: str
 
     @classmethod
@@ -22,7 +21,6 @@ class Post:
         post_title = next(line for line in post_content.splitlines() if line.startswith("#"))
         return Post(
             title=cls._title(filename=path.stem, post_title=post_title),
-            path=path,
             content=converted_post,
             filename=path.stem,
         )
