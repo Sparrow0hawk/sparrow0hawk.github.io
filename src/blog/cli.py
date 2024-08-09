@@ -1,10 +1,12 @@
 from __future__ import annotations
 
 import os
+from datetime import datetime, UTC
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
 
+from blog.feed import Feed
 from blog.post import Post
 
 SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
@@ -29,6 +31,11 @@ def execute(args: list[str]) -> None:
     for post in posts:
         generate_post(posts_dir, env, post)
 
+    feed = Feed(title="alexjcoleman.me", link="https://alexjcoleman.me", author_name="Alex Coleman")
+    feed.add_posts(*posts)
+
+    with open(output_dir / "atom.xml", "w") as atom_feed:
+        atom_feed.write(feed.build(datetime.now(UTC)))
 
 def generate_post(post_dir: Path, env: Environment, post: Post) -> None:
     template = env.get_template("post.html")
