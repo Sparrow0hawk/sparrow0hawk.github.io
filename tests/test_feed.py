@@ -5,7 +5,7 @@ from blog.post import Post
 
 
 def test_build() -> None:
-    feed = Feed(title="Hello blog", link="https://hello.blog", author_name="John Smith")
+    feed = Feed(title="Hello blog", link="https://hello.blog/", author_name="John Smith")
     post = Post(filename="2024-08-01-hello_world", title="Hello World", content="Hello world!", publish_date=datetime(2024, 8, 1))
     feed.add_post(post)
 
@@ -13,7 +13,9 @@ def test_build() -> None:
 
     assert feed_output == """<feed xmlns="http://www.w3.org/2005/Atom">
   <title>Hello blog</title>
-  <link href="https://hello.blog" />
+  <id>https://hello.blog/</id>
+  <link href="https://hello.blog/" rel="alternate" />
+  <link href="https://hello.blog/atom.xml" rel="self" />
   <updated>2020-01-01T12:00:00Z</updated>
   <author>
     <name>John Smith</name>
@@ -21,6 +23,7 @@ def test_build() -> None:
   <entry>
     <title>Hello World</title>
     <id>https://hello.blog/posts/2024-08-01-hello_world.html</id>
+    <link href="https://hello.blog/posts/2024-08-01-hello_world.html" rel="alternate" />
     <updated>2024-08-01T00:00:00Z</updated>
   </entry>
 </feed>"""

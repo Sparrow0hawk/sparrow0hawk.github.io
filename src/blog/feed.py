@@ -29,7 +29,9 @@ class Feed:
     def _build_root_elements(self, now: datetime) -> Element:
         feed = Element("feed", attrib={"xmlns": "http://www.w3.org/2005/Atom"})
         SubElement(feed, "title").text = self.title
-        SubElement(feed, "link", attrib={"href": self.link})
+        SubElement(feed, "id").text = self.link
+        SubElement(feed, "link", attrib={"href": self.link, "rel": "alternate"})
+        SubElement(feed, "link", attrib={"href": f"{self.link}atom.xml", "rel": "self"})
         SubElement(feed, "updated").text = now.strftime("%Y-%m-%dT%H:%M:%SZ")
         author = SubElement(feed, "author")
         SubElement(author, "name").text = self.author_name
@@ -39,7 +41,8 @@ class Feed:
         for post in self.posts:
             entry = SubElement(feed, "entry")
             SubElement(entry, "title").text = post.title
-            SubElement(entry, "id").text = f"{self.link}/posts/{post.filename}.html"
+            SubElement(entry, "id").text = f"{self.link}posts/{post.filename}.html"
+            SubElement(entry, "link", attrib={"href": f"{self.link}posts/{post.filename}.html", "rel": "alternate"})
             SubElement(entry, "updated").text = post.publish_date.strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
