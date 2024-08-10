@@ -31,7 +31,7 @@ def execute(args: list[str]) -> None:
     for post in posts:
         generate_post(posts_dir, env, post)
 
-    feed = Feed(title="alexjcoleman.me", link="https://alexjcoleman.me", author_name="Alex Coleman")
+    feed = Feed(title="Alex Coleman's blog", link="https://alexjcoleman.me/", author_name="Alex Coleman")
     feed.add_posts(*posts)
 
     with open(output_dir / "atom.xml", "w") as atom_feed:
