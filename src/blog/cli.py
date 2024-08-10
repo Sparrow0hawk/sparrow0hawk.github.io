@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 from pathlib import Path
 
 from jinja2 import Environment, FileSystemLoader
@@ -37,6 +37,7 @@ def execute(args: list[str]) -> None:
     with open(output_dir / "atom.xml", "w") as atom_feed:
         atom_feed.write(feed.build(datetime.now(UTC)))
 
+
 def generate_post(post_dir: Path, env: Environment, post: Post) -> None:
     template = env.get_template("post.html")
     with open(post_dir / f"{post.filename}.html", "w") as post_file:
@@ -47,5 +48,3 @@ def generate_index(output_dir: Path, env: Environment, posts: list[Post]) -> Non
     template = env.get_template("index.html")
     with open(output_dir / "index.html", "w") as html_file:
         html_file.write(template.render({"title": "Home", "posts": posts}))
-
-

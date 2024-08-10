@@ -25,7 +25,7 @@ class Post:
             title=cls._title(post_date=publish_date, post_title=post_title),
             content=converted_post,
             filename=path.stem,
-            publish_date=publish_date
+            publish_date=publish_date,
         )
 
     @staticmethod
