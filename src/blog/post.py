@@ -22,15 +22,11 @@ class Post:
         post_title = next(line for line in post_content.splitlines() if line.startswith("#"))
         publish_date = cls._parse_post_date(filename=path.stem)
         return Post(
-            title=cls._title(post_date=publish_date, post_title=post_title),
+            title=post_title.replace('# ', ''),
             content=converted_post,
             filename=path.stem,
             publish_date=publish_date,
         )
-
-    @staticmethod
-    def _title(post_date: datetime, post_title: str) -> str:
-        return f"{post_date.strftime('%d %b %Y')} {post_title.replace('# ', '')}"
 
     @staticmethod
     def _parse_post_date(filename: str) -> datetime:

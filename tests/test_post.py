@@ -37,7 +37,7 @@ def test_create(tmp_path: Path) -> None:
 
     assert (
         post.filename == "2024-08-01-hello_world"
-        and post.title == "01 Aug 2024 Hello World"
+        and post.title == "Hello World"
         and post.content == "<h1>Hello World</h1>\n<p>Hello world!</p>"
         and post.publish_date == datetime(2024, 8, 1)
     )
