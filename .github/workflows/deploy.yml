@@ -33,9 +33,6 @@ jobs:
       - name: Install dependencies
         run: .venv/bin/pip install .[dev]
 
-      - name: Install node dependencies
-        run: npm install
-
       - name: Check types
         run: make lint
 
