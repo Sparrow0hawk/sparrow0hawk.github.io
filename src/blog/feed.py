@@ -44,3 +44,4 @@ class Feed:
             SubElement(entry, "id").text = f"{self.link}posts/{post.filename}.html"
             SubElement(entry, "link", attrib={"href": f"{self.link}posts/{post.filename}.html", "rel": "alternate"})
             SubElement(entry, "updated").text = post.publish_date.strftime("%Y-%m-%dT%H:%M:%SZ")
+            SubElement(entry, "content", attrib={"type": "html"}).text = post.content

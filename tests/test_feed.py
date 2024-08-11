@@ -9,7 +9,7 @@ def test_build() -> None:
     post = Post(
         filename="2024-08-01-hello_world",
         title="Hello World",
-        content="Hello world!",
+        content="<p>Hello world!</p>",
         publish_date=datetime(2024, 8, 1),
     )
     feed.add_post(post)
@@ -32,6 +32,7 @@ def test_build() -> None:
     <id>https://hello.blog/posts/2024-08-01-hello_world.html</id>
     <link href="https://hello.blog/posts/2024-08-01-hello_world.html" rel="alternate" />
     <updated>2024-08-01T00:00:00Z</updated>
+    <content type="html">&lt;p&gt;Hello world!&lt;/p&gt;</content>
   </entry>
 </feed>"""
     )
