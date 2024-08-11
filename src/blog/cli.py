@@ -41,7 +41,7 @@ def execute(args: list[str]) -> None:
     _copy_assets(output_dir)
 
 
-def _copy_assets(output_dir):
+def _copy_assets(output_dir: Path) -> None:
     copytree(SCRIPT_DIR / "assets", output_dir / "static", dirs_exist_ok=True)
 
 
