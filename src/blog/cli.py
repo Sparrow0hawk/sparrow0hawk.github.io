@@ -9,7 +9,7 @@ from jinja2 import Environment, FileSystemLoader
 from blog.feed import Feed
 from blog.post import Post
 
-SCRIPT_DIR = os.path.dirname(os.path.realpath(__file__))
+SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 
 
 def execute(args: list[str]) -> None:
@@ -24,7 +24,7 @@ def execute(args: list[str]) -> None:
     posts = [Post.create(path=name.resolve()) for name in post_files]
 
     env = Environment(
-        loader=FileSystemLoader(os.path.join(SCRIPT_DIR, "templates")), trim_blocks=True, lstrip_blocks=True
+        loader=FileSystemLoader(SCRIPT_DIR / "templates"), trim_blocks=True, lstrip_blocks=True
     )
 
     generate_index(output_dir, env, posts)
