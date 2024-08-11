@@ -24,9 +24,7 @@ def execute(args: list[str]) -> None:
     post_files.sort(reverse=True)
     posts = [Post.create(path=name.resolve()) for name in post_files]
 
-    env = Environment(
-        loader=FileSystemLoader(SCRIPT_DIR / "templates"), trim_blocks=True, lstrip_blocks=True
-    )
+    env = Environment(loader=FileSystemLoader(SCRIPT_DIR / "templates"), trim_blocks=True, lstrip_blocks=True)
 
     generate_index(output_dir, env, posts)
     for post in posts:

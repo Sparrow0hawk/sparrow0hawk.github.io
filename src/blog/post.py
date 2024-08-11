@@ -22,7 +22,7 @@ class Post:
         post_title = next(line for line in post_content.splitlines() if line.startswith("#"))
         publish_date = cls._parse_post_date(filename=path.stem)
         return Post(
-            title=post_title.replace('# ', ''),
+            title=post_title.replace("# ", ""),
             content=converted_post,
             filename=path.stem,
             publish_date=publish_date,
