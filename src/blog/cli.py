@@ -3,6 +3,7 @@ from __future__ import annotations
 import os
 from datetime import UTC, datetime
 from pathlib import Path
+from shutil import copytree
 
 from jinja2 import Environment, FileSystemLoader
 
@@ -14,7 +15,7 @@ SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
 
 def execute(args: list[str]) -> None:
     output_dir = Path(args[1]) / "site"
-    (output_dir / "static").mkdir(parents=True, exist_ok=True)
+    output_dir.mkdir(exist_ok=True)
     posts_dir = output_dir / "posts"
     posts_dir.mkdir(exist_ok=True)
 
@@ -36,6 +37,12 @@ def execute(args: list[str]) -> None:
 
     with open(output_dir / "atom.xml", "w") as atom_feed:
         atom_feed.write(feed.build(datetime.now(UTC)))
+
+    _copy_assets(output_dir)
+
+
+def _copy_assets(output_dir):
+    copytree(SCRIPT_DIR / "assets", output_dir / "static", dirs_exist_ok=True)
 
 
 def generate_post(post_dir: Path, env: Environment, post: Post) -> None:

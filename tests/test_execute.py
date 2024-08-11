@@ -14,6 +14,7 @@ def test_execute(content: Path) -> None:
     execute(args)
 
     assert (output_dir / "site").exists()
+    assert (output_dir / "site" / "static" / "main.css").exists()
     assert (output_dir / "site" / "index.html").exists()
     assert (output_dir / "site" / "atom.xml").exists()
     assert (output_dir / "site" / "posts" / "2024-08-01-hello_world.html").exists()

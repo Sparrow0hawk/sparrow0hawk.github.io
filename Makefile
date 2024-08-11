@@ -2,7 +2,6 @@ bin = .venv/bin
 
 make:
 	$(bin)/python -m blog content/ .
-	npm run build
 
 clean:
 	rm -rf site
