@@ -1,16 +1,14 @@
 from __future__ import annotations
 
-import os
 from datetime import UTC, datetime
 from pathlib import Path
 from shutil import copytree
 
-from jinja2 import Environment, FileSystemLoader
+from jinja2 import Environment
 
 from blog.feed import Feed
 from blog.post import Post
-
-SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
+from blog.templates import SCRIPT_DIR, TemplateEngine
 
 
 def execute(args: list[str]) -> None:
@@ -24,11 +22,13 @@ def execute(args: list[str]) -> None:
     post_files.sort(reverse=True)
     posts = [Post.create(path=name.resolve()) for name in post_files]
 
-    env = Environment(loader=FileSystemLoader(SCRIPT_DIR / "templates"), trim_blocks=True, lstrip_blocks=True)
+    template_engine = TemplateEngine()
 
-    generate_index(output_dir, env, posts)
+    with open(output_dir / "index.html", "w") as html_file:
+        html_file.write(template_engine.generate_index(posts))
+
     for post in posts:
-        generate_post(posts_dir, env, post)
+        generate_post(posts_dir, template_engine.env, post)
 
     feed = Feed(title="Alex Coleman's blog", link="https://alexjcoleman.me/", author_name="Alex Coleman")
     feed.add_posts(*posts)
@@ -47,9 +47,3 @@ def generate_post(post_dir: Path, env: Environment, post: Post) -> None:
     template = env.get_template("post.html")
     with open(post_dir / f"{post.filename}.html", "w") as post_file:
         post_file.write(template.render({"title": post.title, "content": post.content}))
-
-
-def generate_index(output_dir: Path, env: Environment, posts: list[Post]) -> None:
-    template = env.get_template("index.html")
-    with open(output_dir / "index.html", "w") as html_file:
-        html_file.write(template.render({"title": "Home", "posts": posts}))
