@@ -1,4 +1,4 @@
-# Building your PyInstaller App for multiple OSs with GitHub Actions"
+# Building your PyInstaller App for multiple OSs with GitHub Actions
 
 Previously, I’d written about building a [graphical user interface (GUI) for a command line tool (CLI) with PySimpleGUI and packaging it up with PyInstaller](@/2023-03-26-python-gui-pyinstaller.md). One drawback I noted with this (and is [noted by PyInstaller themselves](https://pyinstaller.org/en/stable/usage.html#supporting-multiple-operating-systems)) is that you can’t cross compile. This is a pain when I want to be able to build the app for operating systems (OS) I don’t have access too or don’t really want to spin up a virtual machine just to build an executeable. 
 
