@@ -61,6 +61,6 @@ def test_index() -> None:
 
     assert index_page.heading == "My Blog"
     assert index_page.posts() == [
-        {"link": "posts/2024-08-01-hello_world.html", "text": "01 Aug 2024 Hello World"},
-        {"link": "posts/2024-08-02-hello_world_again.html", "text": "02 Aug 2024 Hello World again!"},
+        {"link": "posts/2024-08-01-hello_world.html", "text": "1 Aug 2024 Hello World"},
+        {"link": "posts/2024-08-02-hello_world_again.html", "text": "2 Aug 2024 Hello World again!"},
     ]
