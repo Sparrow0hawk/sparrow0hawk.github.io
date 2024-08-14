@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Iterator, Any
+from typing import Any, Iterator
 
 from bs4 import BeautifulSoup, Tag
 
