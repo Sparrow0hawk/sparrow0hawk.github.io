@@ -17,3 +17,7 @@ class TemplateEngine:
     def generate_index(self, posts: list[Post]) -> str:
         template = self.env.get_template("index.html")
         return template.render({"title": "Home", "posts": posts})
+
+    def generate_post(self, post: Post) -> str:
+        template = self.env.get_template("post.html")
+        return template.render({"title": post.title, "content": post.content})

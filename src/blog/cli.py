@@ -28,7 +28,10 @@ def execute(args: list[str]) -> None:
         html_file.write(template_engine.generate_index(posts))
 
     for post in posts:
-        generate_post(posts_dir, template_engine.env, post)
+        with open(posts_dir / f"{post.filename}.html", "w") as post_file:
+            post_file.write(
+                template_engine.generate_post(post)
+            )
 
     feed = Feed(title="Alex Coleman's blog", link="https://alexjcoleman.me/", author_name="Alex Coleman")
     feed.add_posts(*posts)
@@ -41,9 +44,3 @@ def execute(args: list[str]) -> None:
 
 def _copy_assets(output_dir: Path) -> None:
     copytree(SCRIPT_DIR / "assets", output_dir / "static", dirs_exist_ok=True)
-
-
-def generate_post(post_dir: Path, env: Environment, post: Post) -> None:
-    template = env.get_template("post.html")
-    with open(post_dir / f"{post.filename}.html", "w") as post_file:
-        post_file.write(template.render({"title": post.title, "content": post.content}))
