@@ -7,7 +7,7 @@ clean:
 	rm -rf site
 
 serve:
-	$(bin)/python -m http.server -d site/ 8000
+	$(bin)/python -m http.server -d site/ 5000
 
 format:
 	$(bin)/black src tests
