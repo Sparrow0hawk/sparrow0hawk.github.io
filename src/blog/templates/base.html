@@ -4,12 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/main.css">
-    <link href="atom.xml" type="application/atom+xml" rel="alternate" title="Atom feed" />
+    <link href="atom.xml" type="application/atom+xml" rel="alternate" title="Atom feed"/>
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
 <main>
     {% block content %}{% endblock %}
 </main>
+<footer>
+    <ul>
+        <li>
+            <a href="/atom.xml">RSS</a>
+        </li>
+        <li>
+            <a rel="me" href="https://mastodon.social/@alexjcoleman">Mastodon</a>
+        </li>
+    </ul>
+</footer>
 </body>
 </html>

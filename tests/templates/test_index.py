@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from datetime import datetime
+from random import sample
 from typing import Any, Iterator
 
+import pytest
 from bs4 import BeautifulSoup, Tag
 
 from blog.post import Post
@@ -18,6 +20,9 @@ class IndexPage:
         posts = self.soup.select_one("ul")
         assert posts
         self.posts = IndexPostListComponent(posts)
+        footer = self.soup.select_one("footer")
+        assert footer
+        self.footer = FooterComponent(footer)
 
 
 class IndexPostListComponent:
@@ -39,6 +44,16 @@ class IndexPostItemComponent:
         self.link = anchor["href"]
         self.text = anchor.string or ""
 
+class FooterComponent:
+    def __init__(self, footer: Tag):
+        links = footer.select("a")
+        assert links
+        self.rss = links[0]
+        self.mastodon = links[1]
+
+    def __call__(self) -> dict[str, str | list[str]]:
+        # indexing ResultSet[Tag] could be str | list[str]
+        return {"RSS": self.rss["href"], "Mastodon": self.mastodon["href"]}
 
 def test_index_has_title() -> None:
     template_engine = TemplateEngine()
@@ -80,3 +95,19 @@ def test_index_shows_posts() -> None:
         {"link": "posts/2024-08-01-hello_world.html", "text": "1 Aug 2024 Hello World"},
         {"link": "posts/2024-08-02-hello_world_again.html", "text": "2 Aug 2024 Hello World again!"},
     ]
+
+def test_index_footer_shows_links() -> None:
+    template_engine = TemplateEngine()
+    posts = [
+        Post(
+            filename="2024-08-01-hello_world",
+            title="Hello World",
+            content="Hello world!",
+            publish_date=datetime(2024, 8, 1),
+        )
+    ]
+
+    index = template_engine.generate_index(posts)
+
+    index_page = IndexPage(index)
+    assert index_page.footer() == {"RSS": "/atom.xml", "Mastodon": "https://mastodon.social/@alexjcoleman"}
