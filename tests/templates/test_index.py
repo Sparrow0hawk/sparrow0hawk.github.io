@@ -40,7 +40,23 @@ class IndexPostItemComponent:
         self.text = anchor.string or ""
 
 
-def test_index() -> None:
+def test_index_has_title() -> None:
+    template_engine = TemplateEngine()
+    posts = [
+        Post(
+            filename="2024-08-01-hello_world",
+            title="Hello World",
+            content="Hello world!",
+            publish_date=datetime(2024, 8, 1),
+        )
+    ]
+
+    index = template_engine.generate_index(posts)
+
+    index_page = IndexPage(index)
+    assert index_page.heading == "My Blog"
+
+def test_index_shows_posts() -> None:
     template_engine = TemplateEngine()
     posts = [
         Post(
@@ -56,10 +72,10 @@ def test_index() -> None:
             publish_date=datetime(2024, 8, 2),
         ),
     ]
-    index = template_engine.generate_index(posts)
-    index_page = IndexPage(index)
 
-    assert index_page.heading == "My Blog"
+    index = template_engine.generate_index(posts)
+    
+    index_page = IndexPage(index)
     assert index_page.posts() == [
         {"link": "posts/2024-08-01-hello_world.html", "text": "1 Aug 2024 Hello World"},
         {"link": "posts/2024-08-02-hello_world_again.html", "text": "2 Aug 2024 Hello World again!"},
