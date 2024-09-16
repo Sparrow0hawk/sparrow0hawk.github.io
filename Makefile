@@ -18,4 +18,5 @@ lint:
 
 test:
 	$(bin)/pytest
+
 verify: lint test
