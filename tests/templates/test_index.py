@@ -74,7 +74,7 @@ def test_index_shows_posts() -> None:
     ]
 
     index = template_engine.generate_index(posts)
-    
+
     index_page = IndexPage(index)
     assert index_page.posts() == [
         {"link": "posts/2024-08-01-hello_world.html", "text": "1 Aug 2024 Hello World"},

@@ -31,7 +31,6 @@ def test_post_has_title() -> None:
     post_str = template_engine.generate_post(post)
 
     post_page = PostPage(post_str)
-
     assert post_page.title == "Hello World"
 
 
@@ -47,6 +46,5 @@ def test_post_has_content() -> None:
     post_str = template_engine.generate_post(post)
 
     post_page = PostPage(post_str)
-
     assert post_page.heading == "Hello world!"
     assert post_page.paragraph == "This is the beginning!"
