@@ -1,7 +1,4 @@
-+++
-title = "About"
-path = "about"
-+++
+Title: About
 
 I currently work as a Research Software Engineer in the [Research Computing team](https://arc.leeds.ac.uk/) at the University of Leeds. We help provide training to researchers on reproducible research, using the University's High performance computing system and help foster a collaborative computational research community.
 

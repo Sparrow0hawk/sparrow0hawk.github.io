@@ -2,11 +2,8 @@
 .idea/
 
 # python
-__pycache__
 .venv
+__pycache__
 
-# site
-site
-
-# node
-node_modules
+# pelican
+output

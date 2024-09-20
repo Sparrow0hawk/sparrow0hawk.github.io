@@ -6,6 +6,7 @@ This repository is for my personal site.
 
 To build the site you will need:
 - Python3.12
+- GNU Make
 
 1. Create a virtual environment
    ```bash
@@ -15,13 +16,13 @@ To build the site you will need:
    ```bash
    source .venv/bin/activate
    
-   pip install .
+   pip install -r requirements.txt
    ```
-3. Run generate script
+3. Build site
    ```bash
-   python -m blog content .
+   make html
    ```
 4. Serve site
    ```bash
-   python -m http.server -d site/ 8000
+   make serve
    ```
