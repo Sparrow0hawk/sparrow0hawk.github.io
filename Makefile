@@ -1,5 +1,5 @@
-PY?=
-PELICAN?=pelican
+BIN=.venv/bin
+PELICAN?=$(BIN)/pelican
 PELICANOPTS=
 
 BASEDIR=$(CURDIR)
