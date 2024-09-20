@@ -1,7 +1,5 @@
 Title: TWIL: PyInstaller and PySimpleGUI
 
-# TWIL: PyInstaller and PySimpleGUI
-
 Or rather last week I learned...
 
 Recently I’d been asked about a tool I wrote to automate some post processing I do to get files read for mail merges. This was a series of Python scripts I’d written up into a Click command line interface (CLI) package.

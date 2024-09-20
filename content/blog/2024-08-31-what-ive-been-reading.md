@@ -1,8 +1,6 @@
 Title: What I've been reading
 Date: 2024-08-31
 
-# What I've been reading
-
 - [Teaching to the Test. Why It Security Audits Aren’t Making Stuff Safer](https://matduggan.com/teaching-to-the-test/)
 - [Tim Dowling: I thought my dad would live for ever. I was wrong](https://www.theguardian.com/lifeandstyle/article/2024/aug/03/tim-dowling-i-thought-my-dad-would-live-for-ever-i-was-wrong)
 - [Y'all are sleeping on HTTP/3](https://kmcd.dev/posts/yall-are-sleeping-on-http3/)

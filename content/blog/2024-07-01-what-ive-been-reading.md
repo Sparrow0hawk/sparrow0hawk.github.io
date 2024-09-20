@@ -1,8 +1,6 @@
 Title: What I've been reading
 Date: 2024-07-01
 
-# What I've been reading
-
 A summary of interesting things I've read in the past month, mostly listed for my own reference.
 
 - [Stealing everything you’ve ever typed or viewed on your own Windows PC is now possible with two lines of code — inside the Copilot+ Recall disaster.](https://doublepulsar.com/recall-stealing-everything-youve-ever-typed-or-viewed-on-your-own-windows-pc-is-now-possible-da3e12e9465e)

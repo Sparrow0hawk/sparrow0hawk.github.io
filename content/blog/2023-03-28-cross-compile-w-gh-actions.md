@@ -1,7 +1,5 @@
 Title: Building your PyInstaller App for multiple OSs with GitHub Actions
 
-# Building your PyInstaller App for multiple OSs with GitHub Actions
-
 Previously, I’d written about building a [graphical user interface (GUI) for a command line tool (CLI) with PySimpleGUI and packaging it up with PyInstaller](@/2023-03-26-python-gui-pyinstaller.md). One drawback I noted with this (and is [noted by PyInstaller themselves](https://pyinstaller.org/en/stable/usage.html#supporting-multiple-operating-systems)) is that you can’t cross compile. This is a pain when I want to be able to build the app for operating systems (OS) I don’t have access too or don’t really want to spin up a virtual machine just to build an executeable. 
 
 A natural solution to this feels like [GitHub actions](https://github.com/features/actions) which comes out of the box with runners for windows, macOS and Linux. GitHub actions are GitHubs offering for continuous integration and development and allow you to write simple yml based workflows that are executed on conditions (such as a new tag being pushed to the repo for a release). I love GitHub actions and regularly use and abuse them (see [hackpad Templator](https://github.com/ARCTraining/hackpad-templator)), mostly I like them for deploying things like this blog! Or for automated testing on my repositories. 

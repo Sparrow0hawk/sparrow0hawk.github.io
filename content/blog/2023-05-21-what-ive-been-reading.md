@@ -1,8 +1,6 @@
 Title: What I've been reading
 Date: 2023-05-21
 
-# What I've been reading
-
 This is a quick post to shout out about things I've been reading that I think
 are pretty interesting. Touching on writing Python like Rust, multiple
 interpreters with Python 3.12 and cool stuff with Django 4.2.

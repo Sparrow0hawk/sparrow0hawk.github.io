@@ -1,7 +1,5 @@
 Title: Leaving RSE, don't stop believing in RSE
 
-# Leaving RSE, don't stop believing in RSE
-
 This week marks my final week as an RSE at the University of Leeds. It has been
 a tremendous (just under) 4 years of work but now it's time to move on.
 

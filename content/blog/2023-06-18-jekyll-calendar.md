@@ -1,7 +1,5 @@
 Title: Making a calendar website with Jekyll and GitHub pages
 
-# Making a calendar website with Jekyll and GitHub pages
-
 Recently, I've been working on a Jekyll-based GitHub Pages site that presents a
 paginated list of upcoming events. It also builds on the [CodeRefinery
 git-calendar](https://github.com/coderefinery/git-calendar) tool to generate

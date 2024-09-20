@@ -1,7 +1,5 @@
 Title: Things to do in 2023: A new reveal.js theme
 
-# Things to do in 2023: A new reveal.js theme
-
 A new year is upon us and so that leads to the inevitableness of thinking about things i'd like to get done this year.
 
 One thing that has cropped up already is I could **really** do with personalising a theme for [reveal.js](https://revealjs.com/). 

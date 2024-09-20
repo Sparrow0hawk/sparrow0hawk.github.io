@@ -1,7 +1,5 @@
 Title: Teaching and mastery
 
-# Teaching and mastery
-
 The reference to mastery in this blog title is mostly ironic, as I would readily admit I am definitely not a master of Python and indeed very far from it!
 That said, I certainly aspire to this sort of intangible concept of mastery. 
 

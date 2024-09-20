@@ -1,8 +1,6 @@
 Title: What I've been reading
 Date: 2024-08-01
 
-# What I've been reading
-
 - [The anti-Tory vote won](https://www.prospectmagazine.co.uk/politics/elections/general-election-2024/67168/the-anti-tory-vote-won)
 - [An app can be a home-cooked meal](https://www.robinsloan.com/notes/home-cooked-app/)
 - [Standups: Individual → Teammate](https://tidyfirst.substack.com/p/standups-individual-teammate)

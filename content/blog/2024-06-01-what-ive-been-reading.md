@@ -1,8 +1,6 @@
 Title: What I've been reading
 Date: 2024-06-01
 
-# What I've been reading
-
 A summary of interesting things I've read in the past month, mostly listed for my own reference.
 
 - [How Did REST Come To Mean The Opposite of REST?](https://htmx.org/essays/how-did-rest-come-to-mean-the-opposite-of-rest/)
