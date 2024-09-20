@@ -1,7 +1,7 @@
 {% extends "base.html" %}
-{% block title %}{{ title }}{% endblock %}
+{% block title %}{{ SITENAME }}{% endblock %}
 {% block content %}
-  <h1>My Blog</h1>
+  <h1>{{ SITENAME }}</h1>
   <ul>
     {% for article in articles_page.object_list %}
         <li><a href="/{{ article.url }}">{{ article.date | strftime('%-d %b %Y')}} {{ article.title }}</a> </li>
