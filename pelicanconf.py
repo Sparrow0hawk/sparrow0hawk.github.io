@@ -1,7 +1,6 @@
 AUTHOR = 'Alex Coleman'
 SITENAME = "Alex Coleman's Blog"
-SITEURL = ""
-
+SITEURL = "https://www.alexjcoleman.me"
 
 DISPLAY_CATEGORIES_ON_MENU = False
 
