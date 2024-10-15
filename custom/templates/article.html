@@ -1,7 +1,9 @@
-{% extends "base.html" %}
+{% extends "index.html" %}
 {% block title %}{{ article.title }}{% endblock %}
 {% block content %}
-    <span class="article-date">{{ article.date | strftime('%-d %b %Y') }}</span>
-    <h1 class="article-title">{{ article.title }}</h1>
+    {% block content_title %}
+        <span class="article-date">{{ article.date | strftime('%-d %b %Y') }}</span>
+        <h1 class="article-title">{{ article.title }}</h1>
+    {% endblock %}
     {{ article.content }}
 {% endblock %}
