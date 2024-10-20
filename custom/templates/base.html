@@ -10,6 +10,12 @@
     <title>{% block title %}{% endblock %}</title>
 </head>
 <body>
+<nav>
+    <h3>{{ SITENAME }}</h3>
+    <ul>
+        <li><a href="{{ SITEURL }}">Home</a></li>
+    </ul>
+</nav>
 <main>
     {% block content %}{% endblock %}
 </main>

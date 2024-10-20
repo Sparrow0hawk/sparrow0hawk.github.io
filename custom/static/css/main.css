@@ -13,8 +13,33 @@ body {
     font-size: 1.2rem;
 }
 
-body > * {
+@media (max-width: 650px) {
+    body {
+        grid-template-columns: 1fr;
+        grid-template-areas:
+        "left"
+        "main"
+        "right"
+        "footer";
+    }
+    nav > ul {
+        text-align: right;
+    }
+}
+
+main {
     grid-area: main;
+}
+
+nav {
+    grid-column: left;
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+nav > ul {
+    list-style: none;
+    padding: 0;
 }
 
 pre {
