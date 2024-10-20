@@ -27,10 +27,6 @@ body {
     }
 }
 
-main {
-    grid-area: main;
-}
-
 nav {
     grid-column: left;
     padding-left: 10%;
@@ -42,16 +38,8 @@ nav > ul {
     padding: 0;
 }
 
-pre {
-    padding: 1rem;
-    border: 1px solid black;
-    background-color: #e6f2ff;
-}
-
-blockquote {
-    border-inline-start: .35rem solid darkblue;
-    font-style: italic;
-    padding: .4rem;
+main {
+    grid-area: main;
 }
 
 footer {
@@ -68,6 +56,18 @@ footer ul {
 
 footer li {
     display: inline-block;
+}
+
+pre {
+    padding: 1rem;
+    border: 1px solid black;
+    background-color: #e6f2ff;
+}
+
+blockquote {
+    border-inline-start: .35rem solid darkblue;
+    font-style: italic;
+    padding: .4rem;
 }
 
 .article-date {
