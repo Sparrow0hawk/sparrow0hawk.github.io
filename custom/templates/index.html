@@ -2,9 +2,11 @@
 {% block title %}{{ SITENAME }}{% endblock %}
 {% block content %}
   {% block content_title %}{% endblock %}
-  <ul>
+  <ul class="post-list">
     {% for article in articles_page.object_list %}
-        <li><a href="/{{ article.url }}">{{ article.date | strftime('%-d %b %Y')}} {{ article.title }}</a> </li>
+        <li>
+          <time datetime="{{ article.date }}">{{ article.date | strftime('%-d %b %Y')}}</time> <a href="/{{ article.url }}">{{ article.title }}</a>
+        </li>
     {% endfor %}
   </ul>
 {% endblock %}
