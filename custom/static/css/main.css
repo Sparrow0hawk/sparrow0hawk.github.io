@@ -42,6 +42,10 @@ main {
     grid-area: main;
 }
 
+main li {
+    padding-bottom: 1em;
+}
+
 footer {
     grid-area: footer;
     display: flex;
