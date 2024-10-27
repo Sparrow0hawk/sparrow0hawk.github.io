@@ -25,6 +25,9 @@ body {
     nav > ul {
         text-align: right;
     }
+    nav li {
+        display: inline-block;
+    }
 }
 
 nav {
@@ -36,6 +39,10 @@ nav {
 nav > ul {
     list-style: none;
     padding: 0;
+}
+
+nav li {
+    margin: .8em;
 }
 
 main {
