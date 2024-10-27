@@ -50,7 +50,7 @@ main {
 }
 
 main li {
-    padding-bottom: 1em;
+    margin-bottom: 1em;
 }
 
 footer {
@@ -77,12 +77,12 @@ footer li {
 .post-list > li {
     display: grid;
     grid-template-columns: 35% 65%;
-    padding-bottom: .5em;
+    margin-bottom: .5em;
 }
 
 .post-list time {
     text-align: right;
-    padding-right: .8em;
+    margin-right: .8em;
 }
 
 pre {
