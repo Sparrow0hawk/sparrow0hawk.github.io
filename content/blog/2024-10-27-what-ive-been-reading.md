@@ -1,7 +1,7 @@
 Title: What I've been reading
 Date: 2024-10-27
 
-Authors deserve a shoutout, so from now on I'll do my best to include the authors name alongside the link.
+Authors deserve a shoutout, so from now on I'll do my best to include the author's name alongside the link.
 
 - [Web Components Are Not the Future — They’re the Present, Cory LaViska](https://www.abeautifulsite.net/posts/web-components-are-not-the-future-they-re-the-present/)
 - [On leaving my last job, Varun Gandhi](https://typesanitizer.com/blog/leaving-apple.html)
