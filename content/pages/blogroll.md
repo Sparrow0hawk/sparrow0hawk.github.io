@@ -10,6 +10,7 @@ An (incomplete) list of blogs I subscribe to via RSS or visit:
 - [Sam and Lawrence Freedman's Comment is Freed](https://samf.substack.com/)
 - [Simon Willison’s Weblog](https://simonwillison.net/)
 - [Terence Eden's Blog](https://shkspr.mobi/blog/)
+- [Walknotes](https://walknotes.com/)
 - [University of Leeds Research Computing](https://arc.leeds.ac.uk/blog/)
 
 A brief list of sites that look lovely 😍:
