@@ -1,0 +1,18 @@
+{% if DEFAULT_PAGINATION %}
+{% set first_page = articles_paginator.page(1) %}
+{% set last_page = articles_paginator.page(articles_paginator.num_pages) %}
+<nav>
+    <ul>
+        {% if articles_page.has_previous() %}
+        <li>
+            <a href="{{ SITEURL }}/{{ articles_previous_page.url }}">Previous</a>
+        </li>
+        {% endif %}
+        {% if articles_page.has_next() %}
+        <li>
+            <a href="{{ SITEURL }}/{{ articles_next_page.url }}">Next</a>
+        </li>
+        {% endif %}
+    </ul>
+</nav>
+{% endif %}

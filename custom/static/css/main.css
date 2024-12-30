@@ -22,9 +22,11 @@ body {
         "right"
         "footer";
     }
+
     nav > ul {
         text-align: right;
     }
+
     nav li {
         display: inline-block;
     }
@@ -51,6 +53,15 @@ main {
 
 main li {
     margin-bottom: 1em;
+}
+
+main nav {
+    display: flex;
+    justify-content: center;
+}
+
+main nav li {
+    display: inline-block;
 }
 
 footer {

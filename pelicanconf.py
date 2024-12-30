@@ -8,6 +8,8 @@ PATH = "content"
 ARTICLE_URL = ARTICLE_SAVE_AS = '{category}/{date:%Y}-{date:%m}-{date:%d}-{slug}.html'
 PAGE_URL = PAGE_SAVE_AS = "{slug}.html"
 
+DEFAULT_PAGINATION = 20
+
 ARTICLE_TRANSLATION_ID = False
 
 THEME = "custom"
