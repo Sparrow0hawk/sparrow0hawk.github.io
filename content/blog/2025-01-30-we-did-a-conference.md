@@ -4,7 +4,7 @@ Yesterday saw the UK Cross Government Software Engineering Conference happen for
 had been in the works for about a year since I foolishly replied to a Cross Gov Software Engineering community newsletter 
 about getting involved. Since then it's been a journey, we did a survey to see if people would come and they said they would,
 so maybe this thing was a go-er. We got together an organizing committee of others willing to help make it happen which was 
-fantastic. Together with this group and the support of ~~CDDO~~ GDS's Engineering Excellence team we got a date (yesterday) 
+fantastic. Together with this group and the support of <del>CDDO</del> GDS's Engineering Excellence team we got a date (yesterday) 
 and a venue (GDS's office). We lined up two fantastic keynote speakers: [Asim Hussain](https://asim.dev/) from the Green Software Foundation
 and [Terence Eden](https://shkspr.mobi/blog/), formerly of NHSX and CDDO. We gave people the opportunity to submit ten minute lightning talks and 
 had 6 insightful and engaging speakers from a variety of departments cover topics from how to organise a hackathon to being
