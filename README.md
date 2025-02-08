@@ -20,7 +20,7 @@ To build the site you will need:
    ```
 3. Build site
    ```bash
-   make html
+   RELATIVE=1 make html
    ```
 4. Serve site
    ```bash
