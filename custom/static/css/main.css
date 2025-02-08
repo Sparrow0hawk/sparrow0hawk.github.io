@@ -120,3 +120,8 @@ blockquote {
     margin-bottom: 30px;
     font-size: 2.5rem;
 }
+
+p > img {
+    display: block;
+    margin: 0 auto;
+}
