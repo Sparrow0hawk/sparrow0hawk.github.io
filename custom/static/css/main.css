@@ -85,6 +85,8 @@ footer li {
     display: inline-block;
 }
 
+/* index.html */
+
 .post-list {
     list-style: none;
     padding: 0;
@@ -100,6 +102,8 @@ footer li {
     text-align: right;
     margin-right: .8em;
 }
+
+/* article.html */
 
 pre {
     padding: 1rem;
