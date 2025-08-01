@@ -1,5 +1,5 @@
 Title: What I've been reading
-Date: 2025-06-01
+Date: 2025-08-01
 
 A condensed list from June/July, I definitely read more than this but failed to record it!
 
