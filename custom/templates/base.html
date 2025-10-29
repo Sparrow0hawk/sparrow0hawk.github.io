@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/{{ THEME_STATIC_DIR }}/css/main.css">
     {% if FEED_ATOM %}
-        <link href="{{ FEED_DOMAIN }}/{%if FEED_ATOM_URL %}{{ FEED_ATOM_URL }}{% else %}{{ FEED_ATOM }}{% endif %}" type="application/atom+xml" rel="alternate" title="{{ SITENAME|striptags }} Atom Feed" />
+    <link href="{{ FEED_DOMAIN }}/{%if FEED_ATOM_URL %}{{ FEED_ATOM_URL }}{% else %}{{ FEED_ATOM }}{% endif %}"
+          type="application/atom+xml" rel="alternate" title="{{ SITENAME|striptags }} Atom Feed"/>
     {% endif %}
     <title>{% block title %}{% endblock %}</title>
 </head>
@@ -22,19 +23,25 @@
     {% block content %}{% endblock %}
 </main>
 <footer>
-    <ul>
-        {% if FEED_ATOM %}
-        <li>
-            <a href="{{ FEED_DOMAIN }}/{%if FEED_ATOM_URL %}{{ FEED_ATOM_URL }}{% else %}{{ FEED_ATOM }}{% endif %}">RSS</a>
-        </li>
-        {% endif %}
-        <li>
-            <a rel="me" href="https://mastodon.social/@alexjcoleman">Mastodon</a>
-        </li>
-        <li>
-            <a href="https://github.com/Sparrow0hawk/">GitHub</a>
-        </li>
-    </ul>
+    <div class="socials">
+        <ul>
+            {% if FEED_ATOM %}
+            <li>
+                <a href="{{ FEED_DOMAIN }}/{%if FEED_ATOM_URL %}{{ FEED_ATOM_URL }}{% else %}{{ FEED_ATOM }}{% endif %}">RSS</a>
+            </li>
+            {% endif %}
+            <li>
+                <a rel="me" href="https://mastodon.social/@alexjcoleman">Mastodon</a>
+            </li>
+            <li>
+                <a href="https://github.com/Sparrow0hawk/">GitHub</a>
+            </li>
+        </ul>
+    </div>
+    <div class="small-print">
+        <p>© 2025 Alex Coleman</p>
+    </div>
+
 </footer>
 </body>
 </html>

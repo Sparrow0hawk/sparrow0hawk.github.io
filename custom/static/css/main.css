@@ -74,6 +74,8 @@ footer {
     display: flex;
     justify-content: center;
     font-size: 16px;
+    flex-direction: column;
+    align-items: center;
 }
 
 footer ul {
@@ -83,6 +85,10 @@ footer ul {
 
 footer li {
     display: inline-block;
+}
+
+.small-print {
+    font-size: .65rem;
 }
 
 /* index.html */
